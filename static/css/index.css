@@ -7,14 +7,14 @@
 
 /* 色彩變數 */
 :root {
-		--main-color: #FFB627; /* 明亮的黃色主色調 */
-		--light-color: #FFF4D9; /* 淺黃色背景 */
-		--dark-text: #333333; /* 深色文字 */
-		--white-color: #FFFFFF; /* 白色 */
-		--accent-color: #FF9400; /* 深一點的橙黃色作為強調 */
-		--gray-light: #F7F7F7; /* 淺灰色 */
-		--gray: #999999; /* 灰色 */
-		--gray-dark: #666666; /* 深灰色 */
+		--main-color: #FFB627;
+		--light-color: #FFF4D9;
+		--dark-text: #333333;
+		--white-color: #FFFFFF; 
+		--accent-color: #FF9400; 
+		--gray-light: #F7F7F7; 
+		--gray: #999999; 
+		--gray-dark: #666666; 
 }
 
 /* 共用樣式 */

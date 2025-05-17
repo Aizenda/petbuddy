@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" type="text/css" href="/static/css/index.css">
-	<link rel="stylesheet" type="text/css" href="/static/css/login.css">
-	<title>登入 / 註冊</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/static/css/index.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/login.css">
+    <title>註冊表單</title>
 </head>
 <body>
-	 <!-- 導航欄 -->
     <nav class="navbar">
         <div class="container navbar-container">
             <a class="logo">
@@ -25,9 +24,63 @@
             </div>
         </div>
     </nav>
-		<div>
-		<from>
-			註冊
-		</from>
+
+    <div class="signup-container">
+        <div class="signup-header">
+            <h2>註冊成為會員</h2>
+        </div>
+        
+        <form method="post">
+            <div class="form-group">
+                <input type="email" name="email" class="form-control" placeholder="Email 帳號" required>
+            </div>
+            
+            <div class="form-group">
+                <input type="text" name="name" class="form-control" placeholder="姓名" required>
+            </div>
+            
+            <div class="form-group">
+                <input type="password" name="password" class="form-control" placeholder="密碼" required>
+            </div>
+            
+            <div class="form-group">
+                <input type="tel" name="phone" class="form-control" placeholder="電話號碼" required>
+            </div>
+            
+            <div class="form-group verification-row">
+                <input type="text" name="num" class="form-control" placeholder="簡訊驗證碼" required>
+                <button type="button" class="btn-verification">點此取得驗證碼</button>
+            </div>
+            
+            <button type="submit" class="btn-signup">註冊</button>
+        </form>
+        
+        <div class="form-footer">
+            已經有帳戶了？<span id="signin-1">立即登入</span>
+        </div>
+    </div>
+
+    <div class="signin-container">
+        <div class="signup-header">
+            <h2>登入會員</h2>
+        </div>
+        
+        <form method="post">
+            <div class="form-group">
+                <input type="email" name="email" class="form-control" placeholder="Email 帳號" required>
+            </div>
+            <div class="form-group">
+                <input type="password" name="password" class="form-control" placeholder="密碼" required>
+            </div>
+            <button type="submit" class="btn-signup">登入</button>
+        </form>
+        
+        <div class="form-footer">
+            已經有帳戶了？
+            <span id="signin-2">立即註冊</span>
+        </div>
+    </div>
+    <script src="/static/js/header.js"></script>
+    <script src="/static/js/login.js"></script>
 </body>
 </html>
