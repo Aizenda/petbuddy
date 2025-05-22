@@ -153,6 +153,10 @@ ul {
 		cursor: pointer;
 }
 
+#memberButton{
+	display: none;
+}
+
 /* 英雄區塊 */
 .hero {
 		background-color: var(--light-color);

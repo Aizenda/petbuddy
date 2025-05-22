@@ -1,11 +1,142 @@
-<!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="/static/css/index.css">
+		<link rel="stylesheet" type="text/css" href="/static/css/SendAdoption.css">
+    <title>寵物送養資訊表單</title>
 </head>
 <body>
-	送養
+	<nav class="navbar">
+		<div class="container navbar-container">
+			<a class="logo">
+					<span class="logo-icon">🐾</span>
+					<span>寵愛之家</span>
+			</a>
+			<ul class="nav-links">
+					<li><a class="nav-link" id="privateAdoption">尋找寵物</a></li>
+					<li><a class="nav-link" id="publicAdoption">公立領養</a></li>
+					<li><a class="nav-link" id="sendAdoption">刊登送養</a></li>
+			</ul>
+			<div class="nav-actions">
+					<a class="btn btn-primary" id="loginButton">登入 / 註冊</a>
+					<a class="btn btn-primary" id="memberButton">會員中心</a>
+			</div>
+		</div>
+	</nav>
+
+    <div class="container">
+			<div class="form-header">送養資訊</div>
+			<div class="form-content">
+					<form>
+							<div class="form-row">
+									<div class="form-group">
+											<label class="required">動物暱稱/小名</label>
+											<input type="text" placeholder="請輸入寵物名字">
+									</div>
+									<div class="form-group">
+											<label class="required">品種</label>
+											<input type="text" placeholder="如：柴犬">
+									</div>
+							</div>
+
+							<div class="form-row">
+									<div class="form-group">
+											<label class="required">動物種類</label>
+											<select>
+													<option value="">請選擇</option>
+													<option value="dog">狗</option>
+													<option value="cat">貓</option>
+													<option value="other">其他</option>
+											</select>
+									</div>
+									<div class="form-group">
+											<label class="required">動物性別</label>
+											<select>
+													<option value="">請選擇</option>
+													<option value="male">公</option>
+													<option value="female">母</option>
+													<option value="unknown">未知</option>
+											</select>
+									</div>
+									<div class="form-group">
+											<label class="required">體型</label>
+											<select>
+													<option value="">請選擇</option>
+													<option value="small">小型</option>
+													<option value="medium">中型</option>
+													<option value="large">大型</option>
+											</select>
+									</div>
+							</div>
+
+							<div class="form-row">
+									<div class="form-group">
+											<label>毛色描述</label>
+											<input type="text" placeholder="如：咖啡虎斑色">
+									</div>
+									<div class="form-group">
+											<label class="required">年紀</label>
+											<select>
+													<option value="">請選擇</option>
+													<option value="baby">幼年 (0-6個月)</option>
+													<option value="young">青年 (6個月-2歲)</option>
+													<option value="adult">成年 (2-8歲)</option>
+													<option value="senior">老年 (8歲以上)</option>
+											</select>
+									</div>
+									<div class="form-group">
+											<label class="required">是否結紮</label>
+											<select>
+													<option value="">請選擇</option>
+													<option value="yes">是</option>
+													<option value="no">否</option>
+													<option value="unknown">未知</option>
+											</select>
+									</div>
+							</div>
+
+							<div class="form-row">
+									<div class="form-group">
+											<label class="required">當前所在地</label>
+											<select class="city-select" required>
+												<option value="" disabled selected>請選擇</option>
+												<option value="keelung">基隆市</option>
+												<option value="taipei">臺北市</option>
+												<option value="new-taipei">新北市</option>
+												<option value="taoyuan">桃園市</option>
+												<option value="hsinchu-city">新竹市</option>
+												<option value="hsinchu-county">新竹縣</option>
+												<option value="miaoli">苗栗縣</option>
+												<option value="taichung">臺中市</option>
+												<option value="changhua">彰化縣</option>
+												<option value="nantou">南投縣</option>
+												<option value="yunlin">雲林縣</option>
+												<option value="chiayi-city">嘉義市</option>
+												<option value="chiayi-county">嘉義縣</option>
+												<option value="tainan">臺南市</option>
+												<option value="kaohsiung">高雄市</option>
+												<option value="pingtung">屏東縣</option>
+												<option value="taitung">台東縣</option>
+												<option value="hualien">花蓮縣</option>
+												<option value="yilan">宜蘭縣</option>
+												<option value="penghu">澎湖縣</option>
+												<option value="kinmen">金門縣</option>
+												<option value="lienchiang">連江縣</option>
+											</select>
+									</div>
+							</div>
+
+							<div class="form-group">
+									<label class="required">其他說明</label>
+									<textarea placeholder="請描述寵物的個性、習慣、送養原因等資訊..."></textarea>
+							</div>
+							<button class="btn btn-primary">刊登資訊</button>
+					</form>
+			</div>
+    </div>
+		
+    <script src="/static/js/header.js"></script>
+    <script src="/static/js/check.js"></script>
 </body>
 </html>

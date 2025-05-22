@@ -8,7 +8,8 @@ const headerView = {
 		privateAdoption:document.querySelector("#privateAdoption"),
 		publicAdoption:document.querySelector("#publicAdoption"),
 		sendAdoption:document.querySelector("#sendAdoption"),
-		loginButton:document.querySelector("#loginButton")
+		loginButton:document.querySelector("#loginButton"),
+		memberButton:document.querySelector("#memberButton") 
 	}
 }
 
