@@ -41,14 +41,15 @@ const checkView = {
 const checkControl = {
   async init() {
     try {
-      const user = await checkModel.check();
+      await checkModel.check();
       checkView.changeMemberButton(); 
     } catch (error) {
+      localStorage.removeItem('token')
       checkView.changeLoginButton();
     }
   }
 };
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
   checkControl.init();
 });

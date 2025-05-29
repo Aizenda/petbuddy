@@ -28,114 +28,151 @@
     <div class="container">
 			<div class="form-header">送養資訊</div>
 			<div class="form-content">
-					<form>
-							<div class="form-row">
-									<div class="form-group">
-											<label class="required">動物暱稱/小名</label>
-											<input type="text" placeholder="請輸入寵物名字">
-									</div>
-									<div class="form-group">
-											<label class="required">品種</label>
-											<input type="text" placeholder="如：柴犬">
-									</div>
-							</div>
+			<form id="sendForm">
+				<div class="form-row">
+					<div class="form-group">
+						<label class="required">動物暱稱/小名</label>
+						<input type="text" name="pet_name" placeholder="請輸入寵物名字" required>
+					</div>
+					<div class="form-group">
+						<label class="required">品種</label>
+						<input type="text" name="pet_breed" placeholder="如：柴犬" required>
+					</div>
+				</div>
 
-							<div class="form-row">
-									<div class="form-group">
-											<label class="required">動物種類</label>
-											<select>
-													<option value="">請選擇</option>
-													<option value="dog">狗</option>
-													<option value="cat">貓</option>
-													<option value="other">其他</option>
-											</select>
-									</div>
-									<div class="form-group">
-											<label class="required">動物性別</label>
-											<select>
-													<option value="">請選擇</option>
-													<option value="male">公</option>
-													<option value="female">母</option>
-													<option value="unknown">未知</option>
-											</select>
-									</div>
-									<div class="form-group">
-											<label class="required">體型</label>
-											<select>
-													<option value="">請選擇</option>
-													<option value="small">小型</option>
-													<option value="medium">中型</option>
-													<option value="large">大型</option>
-											</select>
-									</div>
-							</div>
+				<div class="form-row">
+					<div class="form-group">
+						<label class="required">動物種類</label>
+						<select name="pet_kind" required>
+							<option value="">請選擇</option>
+							<option value="dog">狗</option>
+							<option value="cat">貓</option>
+							<option value="other">其他</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label class="required">動物性別</label>
+						<select name="pet_sex" required>
+							<option value="">請選擇</option>
+							<option value="male">公</option>
+							<option value="female">母</option>
+							<option value="unknown">未知</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label class="required">體型</label>
+						<select name="pet_bodytype" required>
+							<option value="">請選擇</option>
+							<option value="small">小型</option>
+							<option value="medium">中型</option>
+							<option value="large">大型</option>
+						</select>
+					</div>
+				</div>
 
-							<div class="form-row">
-									<div class="form-group">
-											<label>毛色描述</label>
-											<input type="text" placeholder="如：咖啡虎斑色">
-									</div>
-									<div class="form-group">
-											<label class="required">年紀</label>
-											<select>
-													<option value="">請選擇</option>
-													<option value="baby">幼年 (0-6個月)</option>
-													<option value="young">青年 (6個月-2歲)</option>
-													<option value="adult">成年 (2-8歲)</option>
-													<option value="senior">老年 (8歲以上)</option>
-											</select>
-									</div>
-									<div class="form-group">
-											<label class="required">是否結紮</label>
-											<select>
-													<option value="">請選擇</option>
-													<option value="yes">是</option>
-													<option value="no">否</option>
-													<option value="unknown">未知</option>
-											</select>
-									</div>
-							</div>
+				<div class="form-row">
+					<div class="form-group">
+						<label>毛色描述</label>
+						<input type="text" name="pet_colour" placeholder="如：咖啡虎斑色" required>
+					</div>
+					<div class="form-group">
+						<label class="required">年紀</label>
+						<select name="pet_age" required>
+							<option value="">請選擇</option>
+							<option value="baby">幼年 (0-6個月)</option>
+							<option value="young">青年 (6個月-2歲)</option>
+							<option value="adult">成年 (2-8歲)</option>
+							<option value="senior">老年 (8歲以上)</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label class="required">是否結紮</label>
+						<select name="pet_ligation_status" required>
+							<option value="">請選擇</option>
+							<option value="yes">是</option>
+							<option value="no">否</option>
+							<option value="unknown">未知</option>
+						</select>
+					</div>
+				</div>
 
-							<div class="form-row">
-									<div class="form-group">
-											<label class="required">當前所在地</label>
-											<select class="city-select" required>
-												<option value="" disabled selected>請選擇</option>
-												<option value="keelung">基隆市</option>
-												<option value="taipei">臺北市</option>
-												<option value="new-taipei">新北市</option>
-												<option value="taoyuan">桃園市</option>
-												<option value="hsinchu-city">新竹市</option>
-												<option value="hsinchu-county">新竹縣</option>
-												<option value="miaoli">苗栗縣</option>
-												<option value="taichung">臺中市</option>
-												<option value="changhua">彰化縣</option>
-												<option value="nantou">南投縣</option>
-												<option value="yunlin">雲林縣</option>
-												<option value="chiayi-city">嘉義市</option>
-												<option value="chiayi-county">嘉義縣</option>
-												<option value="tainan">臺南市</option>
-												<option value="kaohsiung">高雄市</option>
-												<option value="pingtung">屏東縣</option>
-												<option value="taitung">台東縣</option>
-												<option value="hualien">花蓮縣</option>
-												<option value="yilan">宜蘭縣</option>
-												<option value="penghu">澎湖縣</option>
-												<option value="kinmen">金門縣</option>
-												<option value="lienchiang">連江縣</option>
-											</select>
-									</div>
-							</div>
+				<div class="form-row">
+					<div class="form-group">
+						<label class="required">當前所在地</label>
+						<select name="pet_place" class="city-select" required>
+							<option value="" disabled selected>請選擇</option>
+							<option value="keelung">基隆市</option>
+							<option value="taipei">臺北市</option>
+							<option value="new-taipei">新北市</option>
+							<option value="taoyuan">桃園市</option>
+							<option value="hsinchu-city">新竹市</option>
+							<option value="hsinchu-county">新竹縣</option>
+							<option value="miaoli">苗栗縣</option>
+							<option value="taichung">臺中市</option>
+							<option value="changhua">彰化縣</option>
+							<option value="nantou">南投縣</option>
+							<option value="yunlin">雲林縣</option>
+							<option value="chiayi-city">嘉義市</option>
+							<option value="chiayi-county">嘉義縣</option>
+							<option value="tainan">臺南市</option>
+							<option value="kaohsiung">高雄市</option>
+							<option value="pingtung">屏東縣</option>
+							<option value="taitung">台東縣</option>
+							<option value="hualien">花蓮縣</option>
+							<option value="yilan">宜蘭縣</option>
+							<option value="penghu">澎湖縣</option>
+							<option value="kinmen">金門縣</option>
+							<option value="lienchiang">連江縣</option>
+						</select>
+					</div>
+				</div>
 
-							<div class="form-group">
-									<label class="required">其他說明</label>
-									<textarea placeholder="請描述寵物的個性、習慣、送養原因等資訊..."></textarea>
-							</div>
-							<button class="btn btn-primary">刊登資訊</button>
-					</form>
+				<div class="form-group">
+					<label class="required" for="description">其他說明</label>
+					<textarea id="description" name="pet_describe" placeholder="請描述寵物的個性、習慣、送養原因等資訊..." required></textarea>
+				</div>
+
+				<div class="upload-section">
+					<label class="required">新增相片(最多4張)</label>
+					<div class="images-grid" id="imagesGrid">
+						<label class="upload-area" id="uploadArea">
+							<input 
+								type="file" 
+								class="upload-input" 
+								id="imageInput" 
+								name="images"
+								accept="image/*" 
+								multiple
+							>
+							<svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+							</svg>
+							<span class="upload-text">點擊上傳圖片</span>
+						</label>
+					</div>
+
+					<div class="status-bar" id="statusBar" style="display: none;">
+						<div class="status-left">
+							<svg class="status-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+							</svg>
+							<span class="status-text" id="statusText">已上傳 0 張圖片</span>
+						</div>
+						<span class="status-count" id="remainingCount">4 張剩餘</span>
+					</div>
+
+					<div class="limit-warning" id="limitWarning" style="display: none;">
+						<p class="limit-warning-text">已達到最大上傳數量限制 (4 張)</p>
+					</div>
+				</div>
+
+				<button class="btn btn-primary">刊登資訊</button>
+			</form>
+
 			</div>
     </div>
-		
+		<script src="/static/js/send.js"></script>
     <script src="/static/js/header.js"></script>
     <script src="/static/js/check.js"></script>
 </body>

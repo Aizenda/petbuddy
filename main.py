@@ -1,6 +1,6 @@
 from fastapi import *
 from fastapi.responses import FileResponse
-from backend.route import index, login
+from backend.route import index, login, public,send
 from fastapi.staticfiles import StaticFiles
 
 
@@ -8,6 +8,8 @@ app = FastAPI()
 app.mount("/static" ,StaticFiles(directory="static"), name="static")
 app.include_router(login.router)
 app.include_router(index.router)
+app.include_router(public.router)
+app.include_router(send.router)
 
 @app.get("/")
 async def home_page():
@@ -29,7 +31,7 @@ async def send_page():
 	file_path = "./static/html/sendAdoption.html"
 	return FileResponse(file_path, media_type="text/html")
 
-@app.get("/loginButton")
+@app.get("/login")
 async def login_page():
 	file_path = "./static/html/login.html"
 	return FileResponse(file_path, media_type="text/html")

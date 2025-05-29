@@ -21,7 +21,7 @@ class Redis_OTP(RedisService):
         self.client.delete(f"otp:{phone}")
 
 class Redis_JWT(RedisService):
-    def set_JWT(self, JWT: str, user_id:int, ttl: int = 600,):
+    def set_JWT(self, JWT: str, user_id:int, ttl: int = 3600,):
         self.client.setex(f"JWT:{user_id}", ttl, JWT)
 
     def get_JWT(self, user_id: int) -> str | None:

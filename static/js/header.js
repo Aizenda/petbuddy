@@ -14,6 +14,7 @@ const headerView = {
 }
 
 const headerControl = {
+	
 	init(){
 		headerView.element.homeLogo.addEventListener("click",()=>{
 			this.goPath("/");
@@ -28,16 +29,27 @@ const headerControl = {
 		})
 
 		headerView.element.sendAdoption.addEventListener("click",()=>{
-			this.goPath("/sendAdoption");
+			this.checkToken(()=>this.goPath("/sendAdoption"));
+			
 		})
 
 		headerView.element.loginButton.addEventListener("click",()=>{
-			this.goPath("/loginButton");
+			this.goPath("/login");
 		})
 	},
 
 	goPath(url){
-		location.href = url;
+		window.location.href = url;
+	},
+
+	checkToken(callback){
+		const token = localStorage.getItem("token");
+		if(!token || token===null){
+			alert("請登入");
+			window.location.href = "/login";
+			return;
+		};
+		callback();
 	}
 }
 

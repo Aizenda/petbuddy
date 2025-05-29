@@ -239,6 +239,7 @@ ul {
 		font-weight: 500;
 		color: var(--accent-color);
 		margin-top: 8px;
+		cursor: pointer;
 }
 
 .category-link:hover {

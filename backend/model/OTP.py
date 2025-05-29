@@ -1,4 +1,5 @@
-import boto3, os, random
+from twilio.rest import Client
+import os, random
 from dotenv import load_dotenv
 from .redis_sever import *
 
@@ -7,12 +8,11 @@ load_dotenv()
 class OTPService:
 
     def __init__(self):
-        self.client = boto3.client(
-            "sns",
-            aws_access_key_id=os.getenv("SNS_Access_key"),
-            aws_secret_access_key=os.getenv("SNS_Secret_acces_key"),
-            region_name=os.getenv("AWS_REGION")
+        self.client = Client(
+            os.getenv("TWILIO_ACCOUNT_SID"),
+            os.getenv("TWILIO_AUTH_TOKEN")
         )
+        self.twilio_number = os.getenv("TWILIO_PHONE_NUMBER")
         self.redis = Redis_OTP() 
 
     def generate_otp(self) -> int:
@@ -22,18 +22,18 @@ class OTPService:
         formatted_phone = self._format_phone_number(phone_number)
         otp = self.generate_otp()
         message = f"您的簡訊驗證碼為：{otp}"
-        print(otp)
 
-        self.redis.set_otp(phone_number, otp) 
+        self.redis.set_otp(phone_number, otp)
 
-        response = self.client.publish(
-            PhoneNumber=formatted_phone,
-            Message=message
+        message_response = self.client.messages.create(
+            body=message,
+            from_=self.twilio_number,
+            to=formatted_phone
         )
-        return response
+        return message_response.sid  # 可選回傳
 
     def verify_otp(self, phone_number: str, user_input: str) -> bool:
-        otp_stored = self.redis.get_otp(phone_number) 
+        otp_stored = self.redis.get_otp(phone_number)
         if otp_stored and otp_stored == user_input:
             self.redis.delete_otp(phone_number)
             return True

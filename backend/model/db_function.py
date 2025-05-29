@@ -27,8 +27,15 @@ create_table("""
 """)
 
 create_table("""
-    CREATA TABLE IF NOT EXISTS public(
-
-             
-             )
-""")
+    CREATE TABLE IF NOT EXISTS public(
+        animal_subid VARCHAR(50) NOT NULL UNIQUE PRIMARY KEY,
+        animal_place VARCHAR(50) NOT NULL,
+        animal_kind  VARCHAR(50) NOT NULL,
+        album_file TEXT NOT NULL,
+        animal_sex VARCHAR(20) NOT NULL,
+        animal_bodytype VARCHAR(10) NOT NULL,
+        animal_colour VARCHAR(20) NOT NULL,
+        shelter_address VARCHAR(255) NOT NULL,
+        shelter_tel VARCHAR(50) NOT NULL
+    );
+""") 

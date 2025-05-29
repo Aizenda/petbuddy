@@ -133,12 +133,11 @@ async def user_check(request: Request):
         return JSONResponse({"ok": False, "message": "請登入"}, status_code=403)
 
     token = auth_header.split(" ")[1]
-    print(token)
-    if not token:
+    
+    if not token or token == "null":
         return JSONResponse({"ok": False, "message": "請登入"}, status_code=403)
 
     payload = JWT.decode_jwt(token)
-    print(payload)
     if not payload:
         return JSONResponse({"ok": False, "message": "Token 無效或已過期"}, status_code=401)
 
@@ -163,4 +162,4 @@ async def user_check(request: Request):
         cursor.close()
         conn.close()
 
-    return JSONResponse({"ok": True, "user_id": user_id, "username": payload.get("username")})
+    return JSONResponse({"ok": True, "user_id": user_id, "username": payload.get("username")},status_code=200)
