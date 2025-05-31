@@ -1,6 +1,6 @@
 from fastapi import *
 from fastapi.responses import FileResponse
-from backend.route import index, login, public,send
+from backend.route import index, login, public,send,private
 from fastapi.staticfiles import StaticFiles
 
 
@@ -10,6 +10,7 @@ app.include_router(login.router)
 app.include_router(index.router)
 app.include_router(public.router)
 app.include_router(send.router)
+app.include_router(private.router)
 
 @app.get("/")
 async def home_page():

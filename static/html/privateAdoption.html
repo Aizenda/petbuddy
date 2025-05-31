@@ -3,9 +3,137 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
+	<link rel="stylesheet" type="text/css" href="/static/css/index.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/SendAdoption.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/pricate.css">
+	<title>領養認養</title>
 </head>
 <body>
-	領養	
+	<nav class="navbar">
+		<div class="container navbar-container">
+			<a class="logo">
+				<span class="logo-icon">🐾</span>
+				<span>寵愛之家</span>
+			</a>
+			<ul class="nav-links">
+				<li><a class="nav-link" id="privateAdoption">尋找寵物</a></li>
+				<li><a class="nav-link" id="publicAdoption">公立領養</a></li>
+				<li><a class="nav-link" id="sendAdoption">刊登送養</a></li>
+			</ul>
+			<div class="nav-actions">
+				<a class="btn btn-primary" id="loginButton">登入 / 註冊</a>
+				<a class="btn btn-primary" id="memberButton">會員中心</a>
+			</div>
+		</div>
+    </nav>
+	<main class="container">
+		<div class="container">
+			<div class="form-header">私人刊登領養資訊</div>
+			<div class="form-content">
+				<form>
+					<div class="form-row">
+						<div class="form-group">
+							<label>地區</label>
+							<select id="animal_place">
+								<option value="">請選擇</option>
+								<!-- 北部 -->
+								<option value="基隆市">基隆市</option>
+								<option value="臺北市">臺北市</option>
+								<option value="新北市">新北市</option>
+								<option value="桃園市">桃園市</option>
+								<option value="新竹市">新竹市</option>
+								<option value="新竹縣">新竹縣</option>
+								<option value="宜蘭縣">宜蘭縣</option>
+								<!-- 中部 -->
+								<option value="苗栗縣">苗栗縣</option>
+								<option value="臺中市">臺中市</option>
+								<option value="彰化縣">彰化縣</option>
+								<option value="南投縣">南投縣</option>
+								<option value="雲林縣">雲林縣</option>
+								<!-- 南部 -->
+								<option value="嘉義市">嘉義市</option>
+								<option value="嘉義縣">嘉義縣</option>
+								<option value="臺南市">臺南市</option>
+								<option value="高雄市">高雄市</option>
+								<option value="屏東縣">屏東縣</option>
+								<!-- 東部 -->
+								<option value="臺東縣">臺東縣</option>
+								<option value="花蓮縣">花蓮縣</option>
+								<!-- 離島 -->
+								<option value="澎湖縣">澎湖縣</option>
+								<option value="金門縣">金門縣</option>
+								<option value="連江縣">連江縣</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label>種類</label>
+							<select id="animal_kind">
+								<option value="">請選擇</option>
+								<option value="貓">貓</option>
+								<option value="狗">狗</option>
+								<option value="其他">其他</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label>性別</label>
+							<select id="animal_sex">
+								<option value="">請選擇</option>
+								<option value="公">公</option>
+								<option value="母">母</option>
+								<option value="未知">未知</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label>顏色</label>
+							<select id="animal_colour">
+								<option value="">請選擇</option>
+								<option value="黑色">黑色</option>
+								<option value="虎斑色">虎斑色</option>
+								<option value="棕黑色">棕黑色</option>
+								<option value="黑黃色">黑黃色</option>
+								<option value="黃色">黃色</option>
+								<option value="三花色">三花色</option>
+								<option value="棕色">棕色</option>
+								<option value="白色">白色</option>
+								<option value="黑白色">黑白色</option>
+								<option value="棕白色">棕白色</option>
+								<option value="黑棕色">黑棕色</option>
+								<option value="黑虎斑色">黑虎斑色</option>
+								<option value="黃白色">黃白色</option>
+								<option value="花色">花色</option>
+								<option value="虎斑白色">虎斑白色</option>
+								<option value="咖啡色">咖啡色</option>
+								<option value="米色">米色</option>
+								<option value="棕灰色">棕灰色</option>
+								<option value="咖啡白色">咖啡白色</option>
+								<option value="黃虎斑色">黃虎斑色</option>
+								<option value="玳瑁色">玳瑁色</option>
+								<option value="灰色">灰色</option>
+								<option value="灰白色">灰白色</option>
+								<option value="黑灰色">黑灰色</option>
+								<option value="咖啡棕色">咖啡棕色</option>
+								<option value="咖啡黑色">咖啡黑色</option>
+								<option value="灰黑色">灰黑色</option>
+								<option value="花白色">花白色</option>
+							</select>
+						</div>
+						<div class="button-group">
+							<button class="search-button search-button-primary">
+								搜尋
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+    	</div>
+		<div class="public_card">
+
+		</div>
+		<div class="next_page">
+		</div>
+	</main>
+	<script src="/static/js/header.js"></script>
+	<script src="/static/js/check.js"></script>
+	<script type="module" src="/static/js/private.js"></script>	
 </body>
 </html>
