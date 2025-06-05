@@ -1,17 +1,19 @@
 from fastapi import *
 from fastapi.responses import FileResponse
-from backend.route import index, login, public,send,private,details
+from backend.route import index, login, public,send,private,details,member
 from fastapi.staticfiles import StaticFiles
 
 
 app = FastAPI()
 app.mount("/static" ,StaticFiles(directory="static"), name="static")
+
 app.include_router(login.router)
 app.include_router(index.router)
 app.include_router(public.router)
 app.include_router(send.router)
 app.include_router(private.router)
 app.include_router(details.router)
+app.include_router(member.router)
 
 @app.get("/")
 async def home_page():

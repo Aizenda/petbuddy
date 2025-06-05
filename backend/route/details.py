@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends,Request
+from fastapi import APIRouter,Request
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from ..model.db_connect import mysql_pool
 from backend.model.JWT import JWT
-import json
+
 
 router = APIRouter()
 
@@ -54,7 +54,7 @@ async def dearails(request: Request,id: int):
 		if conn:
 				conn.close()
 
-@router.post("/api/WantToAdopt")
+@router.post("/api/want_to_adopt")
 async def insert_like_table(request: Request):
 	conn = None
 	cursor =None
@@ -97,6 +97,7 @@ async def insert_like_table(request: Request):
 		return JSONResponse({"ok":True},status_code=200)
 
 	except Exception as e:
+		print(str(e))
 		return JSONResponse({"ok":False, "message":str(e)},status_code=500)
 
 	finally:

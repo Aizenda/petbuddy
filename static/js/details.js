@@ -24,7 +24,7 @@ const detailsMode = {
 	async WantToAdopt(postId){
 		const token = localStorage.getItem("token");
 		try{
-		const req = await fetch("/api/WantToAdopt", {
+		const req = await fetch("/api/want_to_adopt", {
 			method:"POST",
 			headers: {
 				"Content-Type": "application/json",
