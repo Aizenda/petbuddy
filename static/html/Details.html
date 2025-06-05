@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="/static/css/index.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/details.css">
+	<title>詳細資料</title>
+</head>
+<body>
+	<nav class="navbar">
+		<div class="container navbar-container">
+			<a class="logo">
+					<span class="logo-icon">🐾</span>
+					<span>寵愛之家</span>
+			</a>
+			<ul class="nav-links">
+					<li><a class="nav-link" id="privateAdoption">尋找寵物</a></li>
+					<li><a class="nav-link" id="publicAdoption">公立領養</a></li>
+					<li><a class="nav-link" id="sendAdoption">刊登送養</a></li>
+			</ul>
+			<div class="nav-actions">
+					<a class="btn btn-primary" id="loginButton">登入 / 註冊</a>
+					<a class="btn btn-primary" id="memberButton">會員中心</a>
+			</div>
+		</div>
+	</nav>
+	<div class="content">
+			<div class="header">
+					<p class="pet-id" id="pet_name"></p>
+					<p class="pet-id">的寵物檔案</p>
+			</div>
+			<div class="img-grid">
+				<div class="image-gallery">
+						<div class="image-container">
+						</div>
+				</div>
+				<div class="info-grid">
+					<div class="info-card">
+							<div class="info-label">
+									<svg class="icon" viewBox="0 0 24 24">
+											<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+									</svg>
+									品種
+							</div>
+							<div class="info-value" id="pet_breed"></div>
+					</div>
+
+					<div class="info-card">
+							<div class="info-label">
+									<svg class="icon" viewBox="0 0 24 24">
+											<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+									</svg>
+									性別
+							</div>
+							<div class="info-value" id="pet_sex"></div>
+					</div>
+
+					<div class="info-card">
+							<div class="info-label">
+									<svg class="icon" viewBox="0 0 24 24">
+											<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+									</svg>
+									年齡
+							</div>
+							<div class="info-value" id="pet_age"></div>
+					</div>
+
+					<div class="info-card">
+							<div class="info-label">
+									<svg class="icon" viewBox="0 0 24 24">
+											<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+									</svg>
+									體型
+							</div>
+							<div class="info-value" id="pet_bodytype"></div>
+					</div>
+
+					<div class="info-card">
+							<div class="info-label">
+									<svg class="icon" viewBox="0 0 24 24">
+											<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+									</svg>
+									毛色
+							</div>
+							<div class="info-value" id="pet_colour"></div>
+					</div>
+
+					<div class="info-card">
+							<div class="info-label">
+									<svg class="icon" viewBox="0 0 24 24">
+											<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+									</svg>
+									所在地
+							</div>
+							<div class="info-value" id="pet_place"></div>
+					</div>
+
+					<div class="info-card">
+							<p class="info-label">
+									<svg class="icon" viewBox="0 0 24 24">
+											<path d="M9 11H7v6h2v-6zm4 0h-2v6h2v-6zm4 0h-2v6h2v-6zm2-7h-3V2h-2v2H8V2H6v2H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H3V9h18v11z"/>
+									</svg>
+									是否結紮
+							</p>
+							<p class="info-value">
+								<span class="status-badge" id="pet_ligation_status"></span>
+							</p>
+					</div>
+					<div class="info-card">
+							<p class="info-label">刊登時間: <p>
+							<p id="date" class="info-value"></p>
+					</div>
+				</div>
+			</div>
+			<div class="description-card">
+				<div class="info-label">
+					<svg class="icon" viewBox="0 0 24 24">
+							<path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+					</svg>
+					詳細描述
+				</div>
+				<div class="info-value" id="pet_describe"></div>
+			</div>
+			<button class="btn-2 btn-2-primary">
+				我要領養
+			</button>
+
+	</div>
+	<script src="/static/js/header.js"></script>
+	<script src="/static/js/check.js"></script>
+	<script src="/static/js/details.js"></script>
+</body>
+</html>

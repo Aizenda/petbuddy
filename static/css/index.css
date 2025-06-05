@@ -36,7 +36,6 @@ ul {
 		width: 100%;
 		max-width: 1200px;
 		margin: 0 auto;
-		padding: 0 20px;
 }
 
 .btn {
@@ -96,6 +95,7 @@ ul {
 		justify-content: space-between;
 		align-items: center;
 		padding: 16px 0;
+		max-width: 1200px;
 }
 
 .logo {

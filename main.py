@@ -1,6 +1,6 @@
 from fastapi import *
 from fastapi.responses import FileResponse
-from backend.route import index, login, public,send,private
+from backend.route import index, login, public,send,private,details
 from fastapi.staticfiles import StaticFiles
 
 
@@ -11,6 +11,7 @@ app.include_router(index.router)
 app.include_router(public.router)
 app.include_router(send.router)
 app.include_router(private.router)
+app.include_router(details.router)
 
 @app.get("/")
 async def home_page():
@@ -35,4 +36,14 @@ async def send_page():
 @app.get("/login")
 async def login_page():
 	file_path = "./static/html/login.html"
+	return FileResponse(file_path, media_type="text/html")
+
+@app.get("/details/{id}")
+async def Details(request: Request, id: int):
+	file_path = "./static/html/Details.html"
+	return FileResponse(file_path, media_type="text/html")
+
+@app.get("/member")
+async def Details(request: Request):
+	file_path = "./static/html/member.html"
 	return FileResponse(file_path, media_type="text/html")

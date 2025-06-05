@@ -36,6 +36,10 @@ const headerControl = {
 		headerView.element.loginButton.addEventListener("click",()=>{
 			this.goPath("/login");
 		})
+
+		headerView.element.memberButton.addEventListener("click",()=>{
+			this.goPath("/member");
+		})
 	},
 
 	goPath(url){

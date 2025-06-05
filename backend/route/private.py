@@ -1,85 +1,101 @@
-from fastapi import *
+from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from ..model.db_connect import mysql_pool
-from ..model.redis_sever import *
 from typing import Optional
 import math
-from datetime import date, datetime
+from ..model.db_connect import mysql_pool
 
 router = APIRouter()
 
 class PrivateRequest(BaseModel):
-	place: Optional[str] = None
-	kind: Optional[str] = None
-	sex: Optional[str] = None
-	color: Optional[str] = None
-	page: Optional[int] = 0
-	
+    place: Optional[str] = None
+    kind: Optional[str] = None
+    sex: Optional[str] = None
+    color: Optional[str] = None
+    page: int = 0
+
 @router.get("/api/private")
 async def private_data(request: PrivateRequest = Depends()):
-	filters = request.model_dump(exclude_none=True)
-	conn = None
-	cursor = None
-	try:
-		conn = mysql_pool.get_connection()
-		cursor = conn.cursor(dictionary=True)
+    conn = None
+    cursor = None
+    try:
+        conn = mysql_pool.get_connection()
+        cursor = conn.cursor(dictionary=True)
 
-		base_query = "SELECT * FROM send"
-		count_query = "SELECT COUNT(*) as total FROM send"
-		conditions = []
-		where_values = []
+        base_query = """
+        FROM send AS s
+        JOIN imgurl ON imgurl.send_id = s.id
+        """
+        where_list = []
+        params_for_where = []
 
-		if "place" in filters:
-			conditions.append("animal_place = %s")
-			where_values.append(filters["place"])
-		if "kind" in filters:
-			conditions.append("animal_kind = %s")
-			where_values.append(filters["kind"])
-		if "sex" in filters:
-			conditions.append("animal_sex = %s")
-			where_values.append(filters["sex"])
-		if "color" in filters:
-			conditions.append("animal_colour = %s")
-			where_values.append(filters["color"])
+        if request.place is not None:
+            where_list.append("s.pet_place = %s")
+            params_for_where.append(request.place)
+        if request.kind is not None:
+            where_list.append("s.pet_kind = %s")
+            params_for_where.append(request.kind)
+        if request.sex is not None:
+            where_list.append("s.pet_sex = %s")
+            params_for_where.append(request.sex)
+        if request.color is not None:
+            where_list.append("s.pet_colour = %s")
+            params_for_where.append(request.color)
 
-		where_clause = ""
-		if conditions:
-			where_clause = " WHERE " + " AND ".join(conditions)
+        where_clause = ""
+        if where_list:
+            where_clause = " WHERE " + " AND ".join(where_list)
 
-		# 取得總筆數
-		cursor.execute(count_query + where_clause, where_values)
-		count = cursor.fetchone()["total"]
-		pages = math.ceil(count / 12)
+        count_sql = f"SELECT COUNT(DISTINCT s.id) AS total_count {base_query}{where_clause}"
+        cursor.execute(count_sql, params_for_where)
+        total_count = cursor.fetchone()["total_count"]
 
-		# 計算 offset
-		page = filters.get("page", 1)
-		offset = page * 12
-		# 查分頁資料
-		query = base_query + where_clause + " LIMIT %s OFFSET %s"
-		data_values = where_values + [12, offset]
-		cursor.execute(query, data_values)
-		
-		result = cursor.fetchall()
-		for row in result:
-			for key in row:
-				if isinstance(row[key], (date, datetime)):
-					row[key] = row[key].isoformat()
-		return JSONResponse({	
-			"ok": True,
-			"data": result,
-			"pages": pages,
-			"current_page": page
-		},status_code= 200)
+        per_page = 12
+        total_pages = math.ceil(total_count / per_page) if total_count > 0 else 1
 
-	except Exception as e:
-		return JSONResponse({
-			"ok": False,
-			"error": str(e)
-		},status_code=500)
+        offset_value = request.page * per_page
+        params_for_data = params_for_where.copy()
+        params_for_data.append(offset_value)
 
-	finally:
-		if cursor:
-			cursor.close()
-		if conn:
-			conn.close()
+        select_sql = f"""
+        SELECT s.id,
+               s.user_id,
+               s.pet_name,
+               s.pet_breed,
+               s.pet_kind,
+               s.pet_sex,
+               s.pet_colour,
+               s.pet_place,
+               JSON_ARRAYAGG(imgurl.img_url) AS images
+        {base_query}
+        {where_clause}
+        GROUP BY
+        s.id,
+        s.user_id,
+        s.pet_name,
+        s.pet_breed,
+        s.pet_kind,
+        s.pet_sex,
+        s.pet_colour,
+        s.pet_place
+        ORDER BY
+        s.id DESC
+        LIMIT 12 OFFSET %s;
+        """
+        cursor.execute(select_sql, params_for_data)
+        data = cursor.fetchall()
+
+        return JSONResponse({
+            "data": data,
+            "current_page": request.page,
+            "total_pages": total_pages,
+            "total_count": total_count
+        },status_code=200)
+    except Exception as e:
+        print(e)
+        return JSONResponse({"error": str(e)}, status_code=500)
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()

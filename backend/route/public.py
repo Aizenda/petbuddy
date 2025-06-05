@@ -4,9 +4,11 @@ from pydantic import BaseModel
 from ..model.db_connect import mysql_pool
 from ..model.redis_sever import *
 from typing import Optional
-import math
+import hashlib, json, math, time
+from ..model.redis_sever import RedisService
 
 router = APIRouter()
+r = RedisService().client
 
 class PublicRequest(BaseModel):
 	place: Optional[str] = None
@@ -18,64 +20,74 @@ class PublicRequest(BaseModel):
 @router.get("/api/public")
 async def get_public(request: PublicRequest = Depends()):
 	filters = request.model_dump(exclude_none=True)
-	conn = None
-	cursor = None
+
+	# 產生快取 key
+	cache_key = "public:" + hashlib.md5(json.dumps(filters, sort_keys=True).encode()).hexdigest()
+	lock_key = cache_key + ":lock"
+
 	try:
-		conn = mysql_pool.get_connection()
-		cursor = conn.cursor(dictionary=True)
+		# 查快取
+		cached = r.get(cache_key)
+		if cached:
+			return {"ok": True, **json.loads(cached)}
 
-		base_query = "SELECT * FROM public"
-		count_query = "SELECT COUNT(*) as total FROM public"
-		conditions = []
-		where_values = []
+		# 嘗試取得鎖
+		if r.set(lock_key, "1", nx=True, ex=10):
+			conn = mysql_pool.get_connection()
+			cursor = conn.cursor(dictionary=True)
 
-		if "place" in filters:
-			conditions.append("animal_place = %s")
-			where_values.append(filters["place"])
-		if "kind" in filters:
-			conditions.append("animal_kind = %s")
-			where_values.append(filters["kind"])
-		if "sex" in filters:
-			conditions.append("animal_sex = %s")
-			where_values.append(filters["sex"])
-		if "color" in filters:
-			conditions.append("animal_colour = %s")
-			where_values.append(filters["color"])
+			base_query = "SELECT * FROM public"
+			count_query = "SELECT COUNT(*) as total FROM public"
+			conditions = []
+			where_values = []
 
-		where_clause = ""
-		if conditions:
-			where_clause = " WHERE " + " AND ".join(conditions)
+			if "place" in filters:
+				conditions.append("animal_place = %s")
+				where_values.append(filters["place"])
+			if "kind" in filters:
+				conditions.append("animal_kind = %s")
+				where_values.append(filters["kind"])
+			if "sex" in filters:
+				conditions.append("animal_sex = %s")
+				where_values.append(filters["sex"])
+			if "color" in filters:
+				conditions.append("animal_colour = %s")
+				where_values.append(filters["color"])
 
-		# 取得總筆數
-		cursor.execute(count_query + where_clause, where_values)
-		count = cursor.fetchone()["total"]
-		pages = math.ceil(count / 12)
+			where_clause = " WHERE " + " AND ".join(conditions) if conditions else ""
 
-		# 計算 offset
-		page = filters.get("page", 1)
-		offset = page * 12
-		# 查分頁資料
-		query = base_query + where_clause + " LIMIT %s OFFSET %s"
-		data_values = where_values + [12, offset]
-		cursor.execute(query, data_values)
-		result = cursor.fetchall()
+			cursor.execute(count_query + where_clause, where_values)
+			count = cursor.fetchone()["total"]
+			pages = math.ceil(count / 12)
 
-		return JSONResponse({
-			"ok": True,
-			"data": result,
-			"pages": pages,
-			"current_page": page
-		},status_code= 200)
+			page = filters.get("page", 0)
+			offset = page * 12
+			query = base_query + where_clause + " LIMIT %s OFFSET %s"
+			data_values = where_values + [12, offset]
+			cursor.execute(query, data_values)
+			result = cursor.fetchall()
 
-	except Exception as e:
-		return JSONResponse({
-			"ok": False,
-			"error": str(e)
-		},status_code=500)
-
-	finally:
-		if cursor:
 			cursor.close()
-		if conn:
 			conn.close()
 
+			res_obj = {
+				"data": result,
+				"pages": pages,
+				"current_page": page
+			}
+
+			# 寫入快取（10分鐘）
+			r.set(cache_key, json.dumps(res_obj, default=str), ex=600)
+			return {"ok": True, **res_obj}
+
+		else:
+			# 搶不到鎖就等快取出現
+			for _ in range(20):
+				time.sleep(0.1)
+				cached = r.get(cache_key)
+				if cached:
+					return {"ok": True, **json.loads(cached)}
+			return JSONResponse({"ok": False, "error": "系統忙碌，請稍後再試"}, status_code=503)
+
+	except Exception as e:
+		return JSONResponse({"ok": False, "error": str(e)}, status_code=500)

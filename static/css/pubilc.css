@@ -12,7 +12,6 @@
 .public_card{ 
 		display: grid; 
 		width: 100%; 
-		padding: 0 20px; 
 		grid-template-columns: repeat(3,1fr); 
 		grid-template-rows: repeat(4,1fr); 
 		gap: 20px; 
@@ -135,6 +134,25 @@
 	display: flex;
 	align-items: center;
 	height: 44px;
+}
+
+.category-link {
+		display: flex;
+		align-items: center;
+		font-size: 14px;
+		font-weight: 500;
+		color: var(--accent-color);
+		margin-top: 8px;
+		cursor: pointer;
+}
+
+.category-link:hover {
+		text-decoration: underline;
+}
+
+.category-link::after {
+		content: "→";
+		margin-left: 4px;
 }
 
 /* 動畫效果 */

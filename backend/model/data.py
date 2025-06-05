@@ -1,6 +1,6 @@
 import requests
 import pandas as pd
-from db_connect import mysql_pool
+from backend.model.db_connect import mysql_pool
 
 class DataCleaning:
     def __init__(self, data, wanted_fields):

@@ -43,98 +43,30 @@ class Uploader():
 
 class UploadText:
     def __init__(self):
-
         self.conn = mysql_pool.get_connection()
         self.cursor = self.conn.cursor()
 
-    def create_table(self):
-        try:
-            create_query = """
-            CREATE TABLE IF NOT EXISTS send (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                user_id INT NOT NULL,  -- 加上這一行
-                pet_name VARCHAR(255) NOT NULL,
-                pet_breed VARCHAR(50) NOT NULL,
-                pet_kind VARCHAR(50) NOT NULL,
-                pet_sex VARCHAR(50) NOT NULL,
-                pet_bodytype VARCHAR(50) NOT NULL,
-                pet_colour VARCHAR(50) NOT NULL,
-                pet_place VARCHAR(50) NOT NULL,
-                pet_describe VARCHAR(255) NOT NULL,
-                pet_ligation_status VARCHAR(50) NOT NULL,
-                pet_img_url VARCHAR(255) NOT NULL,
-                created_at DATE DEFAULT (CURRENT_DATE),
-                CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id)
-                ON DELETE CASCADE
-                ON UPDATE CASCADE
-            );
-            """
-            self.cursor.execute(create_query)
-            self.conn.commit()
-        except Exception as e:
-            print("Failed to create table:", e)
-            self.conn.rollback()
+    def insert_send(self, data: dict) -> int:
+        sql = """
+        INSERT INTO send (
+            user_id, pet_name, pet_breed, pet_kind, pet_sex,
+            pet_bodytype, pet_colour, pet_place, pet_describe,
+            pet_ligation_status, pet_age
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
+        values = (
+            data["user_id"], data["pet_name"], data["pet_breed"], data["pet_kind"],
+            data["pet_sex"], data["pet_bodytype"], data["pet_colour"],
+            data["pet_place"], data["pet_describe"], data["pet_ligation_status"], data["pet_age"]
+        )
+        self.cursor.execute(sql, values)
+        self.conn.commit()
+        return self.cursor.lastrowid
 
-    def insert_text(self, data: dict, file_url: str):
-        try:
-            insert_query = """
-            INSERT INTO send (
-                user_id,
-                pet_name,
-                pet_breed,
-                pet_kind,
-                pet_sex,
-                pet_bodytype,
-                pet_colour,
-                pet_place,
-                pet_describe,
-                pet_ligation_status,
-                pet_img_url
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """
-            self.cursor.execute(insert_query, (
-                data["user_id"],
-                data["pet_name"],
-                data["pet_breed"],
-                data["pet_kind"],
-                data["pet_sex"],
-                data["pet_bodytype"],
-                data["pet_colour"],
-                data["pet_place"],
-                data["pet_describe"],
-                data["pet_ligation_status"],
-                file_url
-            ))
-            self.conn.commit()
-        except Exception as e:
-            print(f"Error occurred: {e}")
-            self.conn.rollback()
-    
-    @classmethod
-    def select(cls):
-        conn = mysql_pool.get_connection()
-        cursor = conn.cursor(dictionary=True)
-        try:
-            select_query = """
-            SELECT id,text, file_url FROM send
-            ORDER BY id DESC;
-            """
-            cursor.execute(select_query) 
-            data = cursor.fetchall()   
-            return data
-        
-        except Exception as e:
-            print("Error during SELECT:", e)
-            return []
-        
-        finally:
-            cursor.close()
-            conn.close()
+    def insert_img(self, send_id: int, url: str):
+        self.cursor.execute("INSERT INTO imgurl (send_id, img_url) VALUES (%s, %s)", (send_id, url))
+        self.conn.commit()
 
- 
     def close(self):
-    
-        if self.cursor:
-            self.cursor.close()
-        if self.conn:
-            self.conn.close()
+        self.cursor.close()
+        self.conn.close()
