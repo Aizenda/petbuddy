@@ -60,7 +60,7 @@ create_table( """
         CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
-            );
+    );
 """)
 
 create_table("""
@@ -79,6 +79,79 @@ create_table( """
         send_id INT NOT NULL,  
         liked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         CONSTRAINT fk_likes_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-        CONSTRAINT fk_likes_send FOREIGN KEY (send_id) REFERENCES send(id) ON DELETE CASCADE,
+        CONSTRAINT fk_likes_send FOREIGN KEY (send_id) REFERENCES send(id) ON DELETE CASCADE
     );
 """)
+
+create_table(
+""" CREATE TABLE forms (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,             
+  description TEXT,                           
+  created_by BIGINT NOT NULL,                 
+  created_at DATETIME NOT NULL DEFAULT NOW(),
+  updated_at DATETIME NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  is_published TINYINT(1) NOT NULL DEFAULT 0 
+);
+"""
+)
+
+create_table("""
+CREATE TABLE form_fields (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  form_id BIGINT NOT NULL,            
+  label VARCHAR(500) NOT NULL,        
+  `type` VARCHAR(50) NOT NULL,       
+  placeholder VARCHAR(255) NULL,       
+  is_required TINYINT(1) NOT NULL DEFAULT 0,
+  sort_order INT NOT NULL DEFAULT 0,   
+  extra JSON NULL,                     
+  created_at DATETIME NOT NULL DEFAULT NOW(),
+  updated_at DATETIME NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  INDEX (form_id),
+  FOREIGN KEY (form_id) REFERENCES forms(id) ON DELETE CASCADE
+);
+""")
+
+
+create_table("""
+CREATE TABLE form_field_options (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  field_id BIGINT NOT NULL,    
+  `value` VARCHAR(500) NOT NULL, 
+  `label` VARCHAR(500) NOT NULL, 
+  sort_order INT NOT NULL DEFAULT 0,
+  INDEX (field_id),
+  FOREIGN KEY (field_id) REFERENCES form_fields(id) ON DELETE CASCADE
+);
+""")
+
+create_table("""
+CREATE TABLE responses (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  form_id BIGINT NOT NULL,          
+  respondent_id BIGINT NULL,        
+  submitted_at DATETIME NOT NULL DEFAULT NOW(),
+  INDEX (form_id),
+  FOREIGN KEY (form_id) REFERENCES forms(id) ON DELETE CASCADE
+);
+""")
+
+
+create_table("""
+CREATE TABLE response_answers (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  response_id BIGINT NOT NULL,      
+  field_id BIGINT NOT NULL,         
+  answer_text TEXT NULL,            
+  answer_option_id BIGINT NULL,     
+  answer_options JSON NULL,         
+  uploaded_files JSON NULL,         
+  INDEX (response_id),
+  INDEX (field_id),
+  FOREIGN KEY (response_id) REFERENCES responses(id) ON DELETE CASCADE,
+  FOREIGN KEY (field_id) REFERENCES form_fields(id) ON DELETE CASCADE
+);
+
+""")
+

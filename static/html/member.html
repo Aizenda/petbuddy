@@ -20,8 +20,8 @@
                 <li><a class="nav-link" id="sendAdoption">刊登送養</a></li>
             </ul>
             <div class="nav-actions">
-                <a class="btn btn-primary" id="loginButton">登入 / 註冊</a>
-                <a class="btn btn-primary" id="memberButton">登出</a>
+                <div class="btn btn-primary" id="loginButton">登入 / 註冊</div>
+                <div class="btn btn-primary" id="memberButton">登出</div>
             </div>
         </div>
     </nav>
@@ -50,17 +50,35 @@
             <div class="content-area">
                 <!-- 會員概覽 -->
                 <div class="section active" id="dashboard">
-                    <h2>領養列表</h2>
-                    <div class="stats-grid" id="adoption">
-                    </div>
-                    <div class="btn-1">
-                        <button class="btn-2" id="adoption-btn">點我領養</button>
-                    </div>
-                    <h2 style="margin-top: 30px;">刊登列表</h2>
+                    <h2>我刊登的送養</h2>
                     <div class="stats-grid" id="send">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>寵物圖片</th>
+                                <th>寵物名稱</th>
+                                <th>想要認養人姓名</th>
+                                <th>想認養人是否已經填表</th>
+                            </tr>
+                        </thead>
+                        <tbody id = "tbody-1">
+                        </tbody>
+                    </table>
                     </div>
-                    <div class="btn-1">
-                        <button class="btn-2" id="send-btn">點我送養</button>
+                    <h2 style="margin-top: 30px;">我想要的領養</h2>
+                    <div class="stats-grid" id="adoption">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>寵物圖片</th>
+                                    <th>寵物名稱</th>
+                                    <th>送養人名稱</th>
+                                    <th>填寫送養人表格</th>
+                                </tr>
+                            </thead>
+                            <tbody id = "tbody-2">
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 

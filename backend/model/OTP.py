@@ -21,6 +21,7 @@ class OTPService:
     def send_otp(self, phone_number: str):
         formatted_phone = self._format_phone_number(phone_number)
         otp = self.generate_otp()
+        print(otp)
         message = f"您的簡訊驗證碼為：{otp}"
 
         self.redis.set_otp(phone_number, otp)
