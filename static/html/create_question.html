@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">	
+	<link rel="stylesheet" type="text/css" href="/static/css/member.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/index.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/question.css">
+	<title>問卷設計</title>
+</head>
+<body>
+<body>
+	<nav class="navbar" style="margin-bottom: 30px;">
+		<div class="container navbar-container">
+			<a class="logo">
+					<span class="logo-icon">🐾</span>
+					<span>寵愛之家</span>
+			</a>
+			<ul class="nav-links">
+					<li><a class="nav-link" id="privateAdoption">尋找寵物</a></li>
+					<li><a class="nav-link" id="publicAdoption">公立領養</a></li>
+					<li><a class="nav-link" id="sendAdoption">刊登送養</a></li>
+			</ul>
+			<div class="nav-actions">
+					<a class="btn btn-primary" id="loginButton">登入 / 註冊</a>
+					<a class="btn btn-primary" id="memberButton">會員中心</a>
+			</div>
+		</div>
+	</nav>
+	<div class="container">
+    <div class="main-content">
+			<div class="sidebar">
+					<h2>🛠️ 表單工具</h2>
+					<p>選擇要添加的題目類型</p>
+					
+					<div class="toolbar">
+							<button onclick="questionView.renderText()">
+									📝 文字題
+							</button>
+							<button onclick="questionView.renderChoice()">
+									☑️ 選擇題
+							</button>
+							<button onclick="questionView.renderImage()">
+									🖼️ 圖片題
+							</button>
+							<button onclick="questionView.clearAll()">
+									🗑️ 清空全部
+							</button>
+							<button  id="save">
+									💾 儲存表單
+							</button>
+					</div>
+			</div>
+			
+			<div class="container">
+					<div class="header">
+							<h1>表單生成器</h1>
+							<p>定義您的篩選表單</p>
+					</div>
+					<div>
+							<input placeholder="表單標題" class="title_style" id="title"/>
+					</div>
+					<div class="content-area">
+							<div class="empty-state">
+									<h3>開始創建你的表單</h3>
+									<p>從左側選擇題目類型開始</p>
+							</div>
+					</div>
+					
+					<div class="preview-section">
+							<button class="preview-btn" onclick="questionView.showPreview()">
+								預覽表單
+							</button>
+					</div>
+			</div>
+    </div>
+	</div>
+
+	<script src="/static/js/question.js"></script>	
+	<script src="/static/js/header.js"></script>
+	<script src="/static/js/check.js"></script>
+
+</body>
+</html>

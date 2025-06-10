@@ -83,75 +83,69 @@ create_table( """
     );
 """)
 
-create_table(
-""" CREATE TABLE forms (
-  id BIGINT AUTO_INCREMENT PRIMARY KEY,
-  title VARCHAR(255) NOT NULL,             
-  description TEXT,                           
-  created_by BIGINT NOT NULL,                 
-  created_at DATETIME NOT NULL DEFAULT NOW(),
-  updated_at DATETIME NOT NULL DEFAULT NOW() ON UPDATE NOW(),
-  is_published TINYINT(1) NOT NULL DEFAULT 0 
-);
-"""
-)
+create_queries = [
+    # 1. forms
+    """
+    CREATE TABLE IF NOT EXISTS forms (
+      id         INT AUTO_INCREMENT PRIMARY KEY,
+      post_id    INT            NOT NULL UNIQUE,
+      title      VARCHAR(255)   NOT NULL,
+      created_at DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (post_id) REFERENCES send(id) ON DELETE CASCADE
+    );
+    """,
+    # 2. form_questions
+    """
+    CREATE TABLE IF NOT EXISTS form_questions (
+      id               INT AUTO_INCREMENT PRIMARY KEY,
+      form_id          INT            NOT NULL,
+      question_key     VARCHAR(50)    NOT NULL,
+      question_order   INT            NOT NULL,
+      type             ENUM('text','choice','image') NOT NULL,
+      title            VARCHAR(255)   NOT NULL,
+      is_required      TINYINT(1)     NOT NULL  DEFAULT 1,
+      FOREIGN KEY (form_id) REFERENCES forms(id) ON DELETE CASCADE,
+      UNIQUE KEY uq_form_q_order (form_id, question_order),
+      INDEX (question_key)
+    );
+    """,
+    # 3. question_options
+    """
+    CREATE TABLE IF NOT EXISTS question_options (
+      id             INT AUTO_INCREMENT PRIMARY KEY,
+      question_id    INT            NOT NULL,
+      option_order   INT            NOT NULL,
+      label          VARCHAR(255)   NOT NULL,
+      value          VARCHAR(255),
+      FOREIGN KEY (question_id) REFERENCES form_questions(id) ON DELETE CASCADE,
+      INDEX (question_id)
+    );
+    """,
 
-create_table("""
-CREATE TABLE form_fields (
-  id BIGINT AUTO_INCREMENT PRIMARY KEY,
-  form_id BIGINT NOT NULL,            
-  label VARCHAR(500) NOT NULL,        
-  `type` VARCHAR(50) NOT NULL,       
-  placeholder VARCHAR(255) NULL,       
-  is_required TINYINT(1) NOT NULL DEFAULT 0,
-  sort_order INT NOT NULL DEFAULT 0,   
-  extra JSON NULL,                     
-  created_at DATETIME NOT NULL DEFAULT NOW(),
-  updated_at DATETIME NOT NULL DEFAULT NOW() ON UPDATE NOW(),
-  INDEX (form_id),
-  FOREIGN KEY (form_id) REFERENCES forms(id) ON DELETE CASCADE
-);
-""")
+    """
+    CREATE TABLE IF NOT EXISTS form_submissions (
+      id                INT AUTO_INCREMENT PRIMARY KEY,
+      form_id           INT            NOT NULL,       -- FK → forms(id)
+      submitter_user_id INT            NULL,           -- FK → users(id)
+      submitted_at      DATETIME       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (form_id) REFERENCES forms(id) ON DELETE CASCADE,
+      FOREIGN KEY (submitter_user_id) REFERENCES users(id) ON DELETE SET NULL
+    );
+    """,
 
-
-create_table("""
-CREATE TABLE form_field_options (
-  id BIGINT AUTO_INCREMENT PRIMARY KEY,
-  field_id BIGINT NOT NULL,    
-  `value` VARCHAR(500) NOT NULL, 
-  `label` VARCHAR(500) NOT NULL, 
-  sort_order INT NOT NULL DEFAULT 0,
-  INDEX (field_id),
-  FOREIGN KEY (field_id) REFERENCES form_fields(id) ON DELETE CASCADE
-);
-""")
-
-create_table("""
-CREATE TABLE responses (
-  id BIGINT AUTO_INCREMENT PRIMARY KEY,
-  form_id BIGINT NOT NULL,          
-  respondent_id BIGINT NULL,        
-  submitted_at DATETIME NOT NULL DEFAULT NOW(),
-  INDEX (form_id),
-  FOREIGN KEY (form_id) REFERENCES forms(id) ON DELETE CASCADE
-);
-""")
-
-
-create_table("""
-CREATE TABLE response_answers (
-  id BIGINT AUTO_INCREMENT PRIMARY KEY,
-  response_id BIGINT NOT NULL,      
-  field_id BIGINT NOT NULL,         
-  answer_text TEXT NULL,            
-  answer_option_id BIGINT NULL,     
-  answer_options JSON NULL,         
-  uploaded_files JSON NULL,         
-  INDEX (response_id),
-  INDEX (field_id),
-  FOREIGN KEY (response_id) REFERENCES responses(id) ON DELETE CASCADE,
-  FOREIGN KEY (field_id) REFERENCES form_fields(id) ON DELETE CASCADE
-);
-
-""")
-
+    """
+    CREATE TABLE IF NOT EXISTS form_answers (
+      id                  INT AUTO_INCREMENT PRIMARY KEY,
+      submission_id       INT            NOT NULL,     -- FK → form_submissions(id)
+      question_id         INT            NOT NULL,     -- FK → form_questions(id)
+      answer_text         TEXT           NULL,
+      answer_option_id    INT            NULL,
+      image_url           TEXT           NULL,
+      FOREIGN KEY (submission_id)    REFERENCES form_submissions(id) ON DELETE CASCADE,
+      FOREIGN KEY (question_id)      REFERENCES form_questions(id)   ON DELETE CASCADE,
+      FOREIGN KEY (answer_option_id) REFERENCES question_options(id) ON DELETE SET NULL
+    );
+    """
+]
+for sql in create_queries:
+    create_table(sql)

@@ -1,0 +1,538 @@
+/* 表單渲染器樣式 - form-styles.css */
+
+.form-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.form-header {
+    background: linear-gradient(135deg, #FFB627 0%, #FF9400 100%);
+    color: white;
+    padding: 40px 30px;
+    text-align: center;
+    position: relative;
+}
+
+.form-header::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: white;
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+}
+
+.form-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.form-meta {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-top: 15px;
+}
+
+.form-content {
+    padding: 40px 30px;
+}
+
+.progress-container {
+    margin-bottom: 30px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #FFB627, #FF9400);
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 4px;
+}
+
+.progress-text {
+    text-align: center;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.question-card {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 25px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.question-card:hover {
+    border-color: #FFB627;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 182, 39, 0.15);
+}
+
+.question-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 15px;
+}
+
+.question-number {
+    background: #FFB627;
+    color: white;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.question-type-badge {
+    background: #6c757d;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.question-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 20px 0;
+    line-height: 1.5;
+}
+
+.required-mark {
+    color: #dc3545;
+    margin-left: 5px;
+}
+
+.options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.option-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    background: white;
+    border-radius: 10px;
+    border: 2px solid #e9ecef;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.option-item:hover {
+    border-color: #FFB627;
+    background: #fffbf5;
+}
+
+.option-item.selected {
+    border-color: #FFB627;
+    background: #fff8e1;
+    box-shadow: 0 2px 8px rgba(255, 182, 39, 0.2);
+}
+
+.option-input {
+    transform: scale(1.3);
+    accent-color: #FFB627;
+}
+
+.option-label {
+    font-size: 1.1rem;
+    color: #333;
+    cursor: pointer;
+    flex: 1;
+}
+
+.text-input {
+    width: 100%;
+    padding: 20px;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-family: inherit;
+    background: white;
+    resize: vertical;
+    min-height: 120px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.text-input:focus {
+    outline: none;
+    border-color: #FFB627;
+    box-shadow: 0 0 0 3px rgba(255, 182, 39, 0.1);
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 0.9rem;
+    margin-top: 8px;
+    display: none;
+    padding: 8px 12px;
+    background: #f8d7da;
+    border-radius: 6px;
+    border: 1px solid #f5c6cb;
+}
+
+.form-actions {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 2px solid #e9ecef;
+}
+
+.form-btn {
+    padding: 15px 35px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-btn-primary {
+    background: linear-gradient(135deg, #FFB627 0%, #FF9400 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 182, 39, 0.3);
+}
+
+.form-btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 182, 39, 0.4);
+}
+
+.form-btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.form-btn-secondary:hover {
+    background: #545b62;
+    transform: translateY(-2px);
+}
+
+/* 圖片題樣式 */
+.image-question-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.question-image-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.question-image {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* 上傳區域樣式 */
+.upload-container {
+    position: relative;
+}
+
+.file-input {
+    display: none;
+}
+
+.upload-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    border: 2px dashed #FFB627;
+    border-radius: 12px;
+    background: #fffbf5;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 150px;
+}
+
+.upload-area:hover {
+    border-color: #FF9400;
+    background: #fff8e1;
+    transform: translateY(-2px);
+}
+
+.upload-area.dragover {
+    border-color: #FF9400;
+    background: #fff8e1;
+    transform: scale(1.02);
+}
+
+.upload-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.7;
+}
+
+.upload-text {
+    text-align: center;
+    color: #666;
+}
+
+.upload-main-text {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.upload-sub-text {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* 預覽區域樣式 */
+.preview-container {
+    position: relative;
+    text-align: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 2px solid #e9ecef;
+}
+
+.preview-image {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.remove-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 50%;
+    background: #dc3545;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.remove-button:hover {
+    background: #c82333;
+    transform: scale(1.1);
+}
+
+.image-info {
+    margin-top: 15px;
+    padding: 10px;
+    background: white;
+    border-radius: 6px;
+    color: #666;
+    font-size: 0.9rem;
+    border: 1px solid #e9ecef;
+}
+
+.image-placeholder {
+    padding: 60px 20px;
+    border: 2px dashed #ddd;
+    text-align: center;
+    color: #999;
+    border-radius: 12px;
+    background: #fafafa;
+    font-size: 1.1rem;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .form-wrapper {
+        border-radius: 15px;
+        margin: 0 10px;
+    }
+    
+    .form-header {
+        padding: 30px 20px;
+    }
+    
+    .form-title {
+        font-size: 2rem;
+    }
+    
+    .form-content {
+        padding: 30px 20px;
+    }
+    
+    .question-card {
+        padding: 20px;
+    }
+    
+    .form-btn {
+        padding: 12px 25px;
+        font-size: 1rem;
+        margin: 5px;
+    }
+    
+    .question-header {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .question-number {
+        width: 30px;
+        height: 30px;
+        font-size: 1rem;
+    }
+    
+    .question-title {
+        font-size: 1.2rem;
+    }
+    
+    .option-item {
+        padding: 12px;
+    }
+    
+    .text-input {
+        padding: 15px;
+        min-height: 100px;
+    }
+    
+    /* 圖片上傳區域響應式 */
+    .upload-area {
+        padding: 30px 15px;
+        min-height: 120px;
+    }
+    
+    .upload-icon {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+    }
+    
+    .upload-main-text {
+        font-size: 1.1rem;
+    }
+    
+    .upload-sub-text {
+        font-size: 0.85rem;
+    }
+    
+    .preview-image {
+        max-height: 250px;
+    }
+    
+    .remove-button {
+        width: 28px;
+        height: 28px;
+        font-size: 1.1rem;
+    }
+    
+    .question-image {
+        max-height: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-header {
+        padding: 20px 15px;
+    }
+    
+    .form-title {
+        font-size: 1.8rem;
+    }
+    
+    .form-content {
+        padding: 20px 15px;
+    }
+    
+    .question-card {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .form-btn {
+        width: 100%;
+        margin: 5px 0;
+    }
+    
+    .question-header {
+        justify-content: center;
+        text-align: center;
+    }
+    
+    /* 小螢幕圖片上傳優化 */
+    .upload-area {
+        padding: 25px 10px;
+        min-height: 100px;
+    }
+    
+    .upload-icon {
+        font-size: 2rem;
+        margin-bottom: 8px;
+    }
+    
+    .upload-main-text {
+        font-size: 1rem;
+    }
+    
+    .upload-sub-text {
+        font-size: 0.8rem;
+    }
+    
+    .preview-container {
+        padding: 15px;
+    }
+    
+    .preview-image {
+        max-height: 200px;
+    }
+    
+    .image-info {
+        font-size: 0.8rem;
+        padding: 8px;
+    }
+    
+    .question-image {
+        max-height: 200px;
+    }
+    
+    .image-question-container {
+        gap: 15px;
+    }
+}

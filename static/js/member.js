@@ -109,24 +109,46 @@ const memberView = {
 		const tr = document.createElement("tr");
 		const td0 = document.createElement("td");
 		const img = document.createElement("img");
-
-		img.src = data.images.split(",")[0];
+		
+		img.src = JSON.parse(data.images)[0];
 		img.classList.add("img_box");
 
+
 		td0.appendChild(img);
-		tr.appendChild(td0);
+		tr.appendChild(td0);	
 
 		const td1 = document.createElement("td");
-		td1.textContent = data.pet_name;
+		td1.textContent = data.id;
 		tr.appendChild(td1);
 
 		const td2 = document.createElement("td");
-		td2.textContent = data.user_name ? data.user_name:"正在尋找家";
+		td2.textContent = data.pet_name;
 		tr.appendChild(td2);
 
 		const td3 = document.createElement("td");
-		td3.textContent = data.filled ? "是" : "否";
+		td3.textContent = data.user_name ? data.user_name:"正在尋找家";
 		tr.appendChild(td3);
+
+		const td4 = document.createElement("td");
+		td4.textContent = data.filled ? "是" : "否";
+		tr.appendChild(td4);
+
+		const td5 = document.createElement("td");
+		const btn1 = document.createElement("button");
+		btn1.classList.add("btn-2");
+		btn1.textContent = "完成送養";
+		const btn2 = document.createElement("button");
+		btn2.classList.add("btn-2");
+		btn2.textContent = "取消刊登"
+
+		const td5Div = document.createElement("div");
+		td5Div.classList.add("btn-gap");
+		td5Div.appendChild(btn1)
+		td5Div.appendChild(btn2)
+
+		td5.appendChild(td5Div)
+
+		tr.appendChild(td5);
 
 		tboday.appendChild(tr);
 	},
@@ -137,22 +159,40 @@ const memberView = {
 		const img = document.createElement("img");
 
 		img.src = data.images.split(",")[0];
+		
 		img.classList.add("img_box");
 
 		td0.appendChild(img);
 		tr.appendChild(td0);
 
 		const td1 = document.createElement("td");
-		td1.textContent = data.pet_name;
+		td1.textContent = data.pet_id;
 		tr.appendChild(td1);
 
 		const td2 = document.createElement("td");
-		td2.textContent = data.sender_name;
+		td2.textContent = data.pet_name;
 		tr.appendChild(td2);
 
 		const td3 = document.createElement("td");
-		td3.textContent = data.filled ? "是" : "否";
+		td3.textContent = data.sender_name;
 		tr.appendChild(td3);
+
+		const td4 = document.createElement("td");
+		td4.textContent = data.filled ? "是" : "否";
+		tr.appendChild(td4);
+
+		const td5 = document.createElement("td");
+		const btn1 = document.createElement("button");
+		btn1.classList.add("btn-2");
+		btn1.textContent = "取消領養";
+
+		const td5Div = document.createElement("div");
+		td5Div.classList.add("btn-gap");
+		td5Div.appendChild(btn1)
+
+		td5.appendChild(td5Div);
+
+		tr.appendChild(td5);
 
 		tboday.appendChild(tr);
 	},
@@ -175,11 +215,6 @@ const memberControl = {
 		for (let i = 0; i < wantToAdopt.data.length; i++) {
 			memberView.renderAdoptCards(wantToAdopt.data[i]);
 		}
-
-		
-
-		
-		
 		memberView.renderUser(user);
 		this.logout();	
 	},

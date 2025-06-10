@@ -41,6 +41,13 @@ td:first-child {
     vertical-align: middle
 }
 
+.btn-gap{
+    display: grid;
+    grid-template-rows:auto;
+    gap: 20px;
+    justify-content: center;
+}
+
 th:first-child{
     width: 125px;
     border-radius: 10px;
@@ -112,6 +119,7 @@ th {
     display: grid;
     grid-template-columns: 280px 1fr;
     gap: 30px;
+    
 }
 
 .sidebar {
@@ -120,6 +128,8 @@ th {
     padding: 25px;
     height: fit-content;
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    position: sticky;
+    top: 10%;
 }
 
 .sidebar h3 {

@@ -78,7 +78,7 @@ async def send_adoption(
             r.delete(key)
 
         upload_text.close()
-        return {"ok": True, "message": "送養資訊已成功刊登！"}
+        return {"ok": True, "message": "送養資訊已成功刊登！","post_id":send_id}
 
     except Exception as e:
         print("送養失敗:", e)

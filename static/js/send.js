@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 			if (res.ok && result.ok) {
 				alert("送養資訊已成功刊登！");
-				window.location.href = "/member";
+				window.location.href = `/question/${result.post_id}`;
 			} else {
 				alert(result.error || "送出失敗，請稍後再試");
 			}

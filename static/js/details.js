@@ -114,7 +114,7 @@ const detailsControl = {
 		const postUserId = data.user_id;
 		const userId = req.user_id;
 		const postId = data.id;
-
+		console.log(postId)
 		detailsView.cheackUSer(userId , postUserId);
 		detailsView.render(data);
 		detailsView.renderImg(imgArray);
@@ -125,8 +125,10 @@ const detailsControl = {
 			this.cheackToken();
 			
 			const WantToAdoptData = await detailsMode.WantToAdopt(postId);
+			console.log(WantToAdoptData)
 			if(!WantToAdoptData.ok){
 				alert(WantToAdoptData.message);
+				window.location.href = `/ans/${postId}`
 				return;
 			}
 			alert("已確認意願，靜候送養人通知")
@@ -135,8 +137,8 @@ const detailsControl = {
 	cheackToken(){
 		const token = localStorage.getItem("token");
 		if(token === null || token ==undefined){
-			window.location.href = "/login";
 			alert("未登入，請登入!!")
+			window.location.href = "/login";
 			return;
 		};
 	}

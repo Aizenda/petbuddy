@@ -60,24 +60,26 @@ async def get_advertise_for_adoption(request:Request):
 			return JSONResponse({"ok":False,"message": "未登入"},status_code=401)
 
 		user_id = user_data.get("userid")
-
 		select_want_to_adopt_quary = """
 		SELECT 
 			s.*,
 			u.name AS user_name, 
 			u.email AS user_email,
 			l.liked_at AS time,
-			GROUP_CONCAT(i.img_url) AS images
-		FROM send AS s
-		LEFT JOIN likes AS l 
-			ON s.id = l.send_id
-		LEFT JOIN users AS u 
-			ON l.user_id = u.id
-		LEFT JOIN imgurl AS i
-			ON s.id = i.send_id
-		WHERE s.user_id = %s
-		GROUP BY s.id, u.name, u.email, l.liked_at
-		ORDER BY s.created_at DESC, l.liked_at DESC;
+				JSON_ARRAYAGG(i.img_url) AS images
+			FROM send AS s
+			LEFT JOIN likes AS l 
+				ON s.id = l.send_id
+			LEFT JOIN users AS u 
+				ON l.user_id = u.id
+			LEFT JOIN imgurl AS i
+				ON s.id = i.send_id
+			WHERE s.user_id = %s
+			GROUP BY 
+					s.id,               
+					u.name, 
+					u.email, 
+					l.liked_at;
 		"""
 
 		cursor.execute(select_want_to_adopt_quary,(user_id,))
@@ -87,7 +89,7 @@ async def get_advertise_for_adoption(request:Request):
 	
 	except Exception as e:
 		print(e)
-		return JSONResponse({"ok":False,"message":str(e)},status_code=500)
+		return JSONResponse({"ok":False,"message":str(e)}, status_code=500)
 	
 	finally:
 		if cursor:
@@ -108,7 +110,7 @@ async def get_want_to_adopt(request:Request):
 		user_data = JWT.decode_jwt(token)
 
 		if not user_data:
-			return JSONResponse({"ok":False,"message": "未登入"},status_code=401)
+			return JSONResponse({"ok":False,"message": "未登入"}, status_code=401)
 
 		user_id = user_data.get("userid")
 		select_query = """
@@ -139,11 +141,11 @@ async def get_want_to_adopt(request:Request):
 		cursor.execute(select_query,(user_id,))
 		data = cursor.fetchall()
 
-		return JSONResponse({"ok":True, "data":data},status_code=200)
+		return JSONResponse({"ok":True, "data":data}, status_code=200)
 	
 	except Exception as e:
 		print(e)
-		return JSONResponse({"ok":False,"message":str(e)},status_code=500)
+		return JSONResponse({"ok":False,"message":str(e)}, status_code=500)
 
 	finally:
 		if cursor:
