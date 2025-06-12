@@ -1,10 +1,9 @@
-from fastapi import APIRouter, File, UploadFile, Form, Depends, Request
+from fastapi import APIRouter, File, UploadFile, Form, Request
 from fastapi.responses import JSONResponse
 from backend.model.upload_function import Uploader, UploadText
 from backend.model.JWT import JWT
-from pydantic import BaseModel
 from ..model.redis_sever import RedisService
-import hashlib , json, time
+import hashlib , json
 
 router = APIRouter()
 r = RedisService().client

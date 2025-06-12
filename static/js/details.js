@@ -128,9 +128,9 @@ const detailsControl = {
 			console.log(WantToAdoptData)
 			if(!WantToAdoptData.ok){
 				alert(WantToAdoptData.message);
-				window.location.href = `/ans/${postId}`
 				return;
 			}
+			window.location.href = `/ans/${postId}`
 			alert("已確認意願，靜候送養人通知")
 		})
 	},

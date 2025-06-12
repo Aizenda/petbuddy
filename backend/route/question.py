@@ -1,8 +1,10 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from typing import List, Literal, Optional
+from typing import List, Literal
 from ..model.db_connect import mysql_pool
+from ..model.JWT import *
+from ..model.upload_function import *
 
 router = APIRouter()
 
@@ -94,7 +96,7 @@ async def create_form(payload: FormPayload):
     except Exception as e:
         print(e)
         conn.rollback()
-        raise HTTPException(500, f"儲存表單及題目失敗：{e}")
+        return JSONResponse({"ok":False, "message":f"儲存表單及題目失敗：{e}"}, status_code=500)
 
     finally:
         cursor.close()
@@ -167,7 +169,116 @@ async def get_form(post_id: int):
     
     except Exception as e:
         print(str(e))
+        conn.rollback()
+        return JSONResponse({"ok": False, "message": str(e)}, status_code=200)
 
+    finally:
+        cursor.close()
+        conn.close()
+
+@router.post("/api/submit-form")
+async def submit(request: Request):
+    ct = request.headers.get("content-type", "")
+    uploader = Uploader()
+    conn = mysql_pool.get_connection()
+    cursor = conn.cursor()
+
+    try:
+        # ─── 1. 建立 submission 主檔 ─────────────────────────
+        if "application/json" in ct:
+            payload = await request.json()
+            form_id      = int(payload["formId"])
+            submitted_at = payload["submittedAt"]
+            answers_src  = payload["answers"]
+        elif "multipart/form-data" in ct:
+            form         = await request.form()
+            form_id      = int(form.get("formId"))
+            submitted_at = form.get("submittedAt")
+            answers_src  = None
+        else:
+            raise HTTPException(status_code=415, detail="Unsupported Content-Type")
+
+        cursor.execute(
+            """
+            INSERT INTO form_submissions (form_id, submitter_user_id, submitted_at)
+            VALUES (%s, %s, %s)
+            """,
+            (form_id, current_user_id, submitted_at)
+        )
+        submission_id = cursor.lastrowid
+
+        # ─── 2. 處理文字 & 選擇題 ─────────────────────────────
+        if answers_src is not None:
+            # JSON path
+            for qkey, ans in answers_src.items():
+                qid = extract_question_id(qkey)
+                if ans["type"] == "text":
+                    cursor.execute(
+                        "INSERT INTO response_answers (submission_id, question_id, answer_text) VALUES (%s, %s, %s)",
+                        (submission_id, qid, ans["value"])
+                    )
+                elif ans["type"] == "choice":
+                    sel = ans["selectedValues"]
+                    opt = sel if isinstance(sel, str) else sel[0]
+                    cursor.execute(
+                        "SELECT id FROM question_options WHERE form_id=%s AND title=%s",
+                        (form_id, opt)
+                    )
+                    row = cursor.fetchone()
+                    if row:
+                        cursor.execute(
+                            "INSERT INTO response_answers (submission_id, question_id, answer_option_id) VALUES (%s, %s, %s)",
+                            (submission_id, qid, row[0])
+                        )
+        else:
+            # FormData path: 先文字+選擇
+            for key, raw in form.multi_items():
+                if not key.startswith("answer_"): continue
+                qkey = key.replace("answer_", "")
+                ans  = json.loads(raw)
+                qid  = extract_question_id(qkey)
+                if ans["type"] == "text":
+                    cursor.execute(
+                        "INSERT INTO response_answers (submission_id, question_id, answer_text) VALUES (%s, %s, %s)",
+                        (submission_id, qid, ans["value"])
+                    )
+                elif ans["type"] == "choice":
+                    sel = ans["selectedValues"]
+                    opt = sel if isinstance(sel, str) else sel[0]
+                    cursor.execute(
+                        "SELECT id FROM question_options WHERE form_id=%s AND title=%s",
+                        (form_id, opt)
+                    )
+                    row = cursor.fetchone()
+                    if row:
+                        cursor.execute(
+                            "INSERT INTO response_answers (submission_id, question_id, answer_option_id) VALUES (%s, %s, %s)",
+                            (submission_id, qid, row[0])
+                        )
+
+        # ─── 3. 處理圖片題 ─────────────────────────────────────
+        if "multipart/form-data" in ct:
+            for key, val in form.multi_items():
+                if not key.startswith("image_"): continue
+                qkey       = key.replace("image_", "")
+                qid        = extract_question_id(qkey)
+                uploadFile: UploadFile = val
+                # 上傳 S3
+                file_url = await uploader.upload_file(uploadFile, bucket="你的-bucket-name")
+                cursor.execute(
+                    "INSERT INTO response_answers (submission_id, question_id, image_url) VALUES (%s, %s, %s)",
+                    (submission_id, qid, file_url)
+                )
+
+        conn.commit()
+        return {"ok": True, "submission_id": submission_id}
+
+    except HTTPException:
+        conn.rollback()
+        raise
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
         cursor.close()
         conn.close()

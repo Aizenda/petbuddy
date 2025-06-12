@@ -4,6 +4,7 @@ async function renderFormFromBackendData(backendData) {
     const data = await backendData;
     const form = data.form;
     const questions = form.questions;
+
     if (!form || !questions || !Array.isArray(questions)) {
         console.error('Invalid backend data format');
         return;
@@ -13,9 +14,6 @@ async function renderFormFromBackendData(backendData) {
     
     // 清空現有內容
     formContainer.innerHTML = '';
-    
-    // 載入表單樣式
-    ensureFormStyles();
     
     // 創建表單包裝器
     const formWrapper = createElement('div', 'form-wrapper');
@@ -59,20 +57,6 @@ function createElement(tag, className = null, id = null) {
     if (className) element.className = className;
     if (id) element.id = id;
     return element;
-}
-
-// 檢查並載入表單樣式
-function ensureFormStyles() {
-    // 檢查是否已經載入樣式
-    const existingLink = document.querySelector('link[href*="form-styles.css"]');
-    if (existingLink) return;
-    
-    // 創建 link 標籤載入 CSS
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.type = 'text/css';
-    link.href = '/static/css/form-styles.css'; // 調整為您的CSS文件路徑
-    document.head.appendChild(link);
 }
 
 // 創建表單標題區域
@@ -610,8 +594,10 @@ async function submitForm() {
         return;
     }
     
+    const backendData = await getData()
+    const fromId = backendData.form.formId;
     // 準備提交數據
-    const submissionData = await prepareSubmissionData();
+    const submissionData = await prepareSubmissionData(fromId);
     
     console.log('表單提交數據:', submissionData);
     
@@ -632,13 +618,13 @@ async function submitForm() {
 }
 
 // 準備提交數據
-async function prepareSubmissionData() {
+async function prepareSubmissionData(formId) {
     const formHeader = document.querySelector('.form-header');
     const formTitle = formHeader ? formHeader.querySelector('.form-title').textContent : '';
     
     // 基本表單信息
     const baseData = {
-        formId: window.questionsData[0]?.formId || null,
+        formId: formId || null,
         formTitle: formTitle,
         submittedAt: new Date().toISOString(),
         totalQuestions: window.totalQuestions,
@@ -743,7 +729,8 @@ async function submitFormWithImages(submissionData) {
     // 發送到後端
     const response = await fetch('/api/submit-form', {
         method: 'POST',
-        body: formData
+        body: formData,
+        Authorization: `Bearer ${token}`
     });
     
     if (!response.ok) {
@@ -755,10 +742,12 @@ async function submitFormWithImages(submissionData) {
 
 // 提交純文字表單（使用JSON）
 async function submitFormData(submissionData) {
+    const token = localStorage.getItem("token");
     const response = await fetch('/api/submit-form', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(submissionData)
     });
@@ -868,9 +857,7 @@ async function getData(){
         method:"GET"
     }) 
     const data = await req.json()
-    console.log(data)
     return data
-
 }
 
 const backendData = getData()
