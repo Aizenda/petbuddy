@@ -602,7 +602,7 @@ async function submitForm() {
     console.log('表單提交數據:', submissionData);
     
     try {
-        // 如果有圖片需要上傳，使用FormData
+        // // 如果有圖片需要上傳，使用FormData
         if (hasImageAnswers()) {
             await submitFormWithImages(submissionData);
         } else {
@@ -700,7 +700,7 @@ function hasImageAnswers() {
 // 提交包含圖片的表單（使用FormData）
 async function submitFormWithImages(submissionData) {
     const formData = new FormData();
-    
+    const token = localStorage.getItem("token");
     // 添加基本表單數據
     formData.append('formId', submissionData.formId);
     formData.append('formTitle', submissionData.formTitle);
@@ -730,7 +730,9 @@ async function submitFormWithImages(submissionData) {
     const response = await fetch('/api/submit-form', {
         method: 'POST',
         body: formData,
-        Authorization: `Bearer ${token}`
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
     });
     
     if (!response.ok) {

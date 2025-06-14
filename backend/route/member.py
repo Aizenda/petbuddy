@@ -152,3 +152,20 @@ async def get_want_to_adopt(request:Request):
 			cursor.close()
 		if conn:
 			conn.close()
+
+@router.get("/api/question&ans/{post_id}")
+async def get_ans_data(request:Request):
+	conn = None
+	cursor = None
+
+	try:
+		conn = mysql_pool.get_connection()
+		cursor = conn.cursor(dictionary = True)
+
+		
+
+
+	except Exception as e:
+		print(e)
+	finally:
+		pass

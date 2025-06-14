@@ -579,6 +579,7 @@ const questionControl = {
 
 		save.addEventListener("click",async ()=>{
 			const data = questionView.collectFormData();
+			console.log(data)
 			const validate = questionView.validateFormData(data);
 			if(validate.length !== 0){
 				alert(validate);

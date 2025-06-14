@@ -4,7 +4,8 @@ from pydantic import BaseModel
 from typing import List, Literal
 from ..model.db_connect import mysql_pool
 from ..model.JWT import *
-from ..model.upload_function import *
+from ..model.upload_function import Uploader
+import json
 
 router = APIRouter()
 
@@ -178,107 +179,225 @@ async def get_form(post_id: int):
 
 @router.post("/api/submit-form")
 async def submit(request: Request):
+
     ct = request.headers.get("content-type", "")
-    uploader = Uploader()
-    conn = mysql_pool.get_connection()
-    cursor = conn.cursor()
+    conn = None
+    cursor = None
 
     try:
-        # ─── 1. 建立 submission 主檔 ─────────────────────────
-        if "application/json" in ct:
-            payload = await request.json()
-            form_id      = int(payload["formId"])
-            submitted_at = payload["submittedAt"]
-            answers_src  = payload["answers"]
-        elif "multipart/form-data" in ct:
-            form         = await request.form()
-            form_id      = int(form.get("formId"))
-            submitted_at = form.get("submittedAt")
-            answers_src  = None
-        else:
-            raise HTTPException(status_code=415, detail="Unsupported Content-Type")
+        conn = mysql_pool.get_connection()
+        cursor = conn.cursor(dictionary=True)
 
-        cursor.execute(
-            """
-            INSERT INTO form_submissions (form_id, submitter_user_id, submitted_at)
-            VALUES (%s, %s, %s)
-            """,
-            (form_id, current_user_id, submitted_at)
-        )
-        submission_id = cursor.lastrowid
+        token = request.headers.get("Authorization", "").replace("Bearer ", "")
+        user_data = JWT.decode_jwt(token)
 
-        # ─── 2. 處理文字 & 選擇題 ─────────────────────────────
-        if answers_src is not None:
-            # JSON path
-            for qkey, ans in answers_src.items():
-                qid = extract_question_id(qkey)
-                if ans["type"] == "text":
-                    cursor.execute(
-                        "INSERT INTO response_answers (submission_id, question_id, answer_text) VALUES (%s, %s, %s)",
-                        (submission_id, qid, ans["value"])
-                    )
-                elif ans["type"] == "choice":
-                    sel = ans["selectedValues"]
-                    opt = sel if isinstance(sel, str) else sel[0]
-                    cursor.execute(
-                        "SELECT id FROM question_options WHERE form_id=%s AND title=%s",
-                        (form_id, opt)
-                    )
-                    row = cursor.fetchone()
-                    if row:
-                        cursor.execute(
-                            "INSERT INTO response_answers (submission_id, question_id, answer_option_id) VALUES (%s, %s, %s)",
-                            (submission_id, qid, row[0])
-                        )
-        else:
-            # FormData path: 先文字+選擇
-            for key, raw in form.multi_items():
-                if not key.startswith("answer_"): continue
-                qkey = key.replace("answer_", "")
-                ans  = json.loads(raw)
-                qid  = extract_question_id(qkey)
-                if ans["type"] == "text":
-                    cursor.execute(
-                        "INSERT INTO response_answers (submission_id, question_id, answer_text) VALUES (%s, %s, %s)",
-                        (submission_id, qid, ans["value"])
-                    )
-                elif ans["type"] == "choice":
-                    sel = ans["selectedValues"]
-                    opt = sel if isinstance(sel, str) else sel[0]
-                    cursor.execute(
-                        "SELECT id FROM question_options WHERE form_id=%s AND title=%s",
-                        (form_id, opt)
-                    )
-                    row = cursor.fetchone()
-                    if row:
-                        cursor.execute(
-                            "INSERT INTO response_answers (submission_id, question_id, answer_option_id) VALUES (%s, %s, %s)",
-                            (submission_id, qid, row[0])
-                        )
+        if not user_data:
+            return JSONResponse(status_code=401, content={"error": "未授權"})
+        
+        user_id = user_data.get("userid")
+        result_dict = {}
 
-        # ─── 3. 處理圖片題 ─────────────────────────────────────
         if "multipart/form-data" in ct:
-            for key, val in form.multi_items():
-                if not key.startswith("image_"): continue
-                qkey       = key.replace("image_", "")
-                qid        = extract_question_id(qkey)
-                uploadFile: UploadFile = val
-                # 上傳 S3
-                file_url = await uploader.upload_file(uploadFile, bucket="你的-bucket-name")
-                cursor.execute(
-                    "INSERT INTO response_answers (submission_id, question_id, image_url) VALUES (%s, %s, %s)",
-                    (submission_id, qid, file_url)
-                )
 
-        conn.commit()
-        return {"ok": True, "submission_id": submission_id}
+            data = await request.form()
+            for key, value in data.items():
+                if hasattr(value, 'filename'):  # 處理檔案上傳
+                    result_dict[key] = {
+                        'filename': value.filename,
+                        'size': value.size,
+                        'content_type': value.content_type,
+                        'file_object': value  # 保留檔案對象供後續處理
+                    }
+                else:
+                    # 嘗試解析 JSON 字串
+                    try:
+                        result_dict[key] = json.loads(value)
+                    except (json.JSONDecodeError, TypeError):
+                        result_dict[key] = value
+            
 
-    except HTTPException:
-        conn.rollback()
-        raise
+            form_id = data.get("formId")
+
+            insert_sub = """
+            INSERT INTO form_submissions
+            (id, form_id, submitter_user_id, submitted_at)
+            VALUES
+            (DEFAULT, %s, %s, DEFAULT);
+            """
+            cursor.execute(insert_sub,(form_id, user_id,))
+            conn.commit() 
+
+            sub_id = cursor.lastrowid
+            total_questions = int(result_dict.get("totalQuestions"))
+
+            for i in range(total_questions):
+                question_id_query = """
+                SELECT id FROM form_questions
+                WHERE form_id = %s AND question_order = %s
+                """
+                cursor.execute(question_id_query, (form_id, i + 1))
+                question_result = cursor.fetchone()
+                
+                if not question_result:
+                    continue
+                    
+                question_id = question_result['id']
+                
+                answer_key = f"answer_q{i + 1}"
+                image_key = f"image_q{i + 1}"
+                
+                # 初始化所有欄位為 NULL
+                answer_text = None
+                answer_option_id = None
+                image_url = None
+                
+                if answer_key in result_dict:
+                    answer_data = result_dict[answer_key]
+                    
+                    if answer_data['type'] == 'text':
+                        # 文字題：只填 answer_text
+                        answer_text = answer_data['value']
+                        
+                    elif answer_data['type'] == 'choice':
+                        # 選擇題：只填 answer_option_id
+                        selected_value = answer_data.get('selectedValues')
+                        
+                        if selected_value:
+                            # 查找對應的選項 ID
+                            option_query = """
+                            SELECT id FROM question_options
+                            WHERE question_id = %s AND (label = %s OR value = %s)
+                            """
+                            cursor.execute(option_query, (question_id, selected_value, selected_value))
+                            option_result = cursor.fetchone()
+                            if option_result:
+                                answer_option_id = option_result['id']
+                                
+                    elif answer_data['type'] == 'image':
+                        # 圖片題：只填 image_url
+                        if image_key in result_dict:
+                            file_info = result_dict[image_key]
+                            file_object = file_info['file_object']
+                            
+                            # 上傳到 S3
+                            uploader = Uploader()
+                            saved_url = await uploader.upload_file(file_object, "petbuddy-img")
+                            
+                            if saved_url:
+                                image_url = saved_url
+                            else:
+                                raise Exception(f"圖片上傳失敗 - 問題 {i + 1}")
+                
+                # 插入答案（每個欄位只存放對應的內容，其他為 NULL）
+                insert_ans = """
+                INSERT INTO form_answers 
+                (submission_id, question_id, answer_text, answer_option_id, image_url)
+                VALUES (%s, %s, %s, %s, %s)
+                """
+                cursor.execute(insert_ans, (
+                    sub_id, 
+                    question_id, 
+                    answer_text,        # 只有文字題才有值
+                    answer_option_id,   # 只有選擇題才有值
+                    image_url           # 只有圖片題才有值
+                ))
+            
+            conn.commit()
+            
+            return JSONResponse(content={
+                "success": True, 
+                "message": "表單提交成功",
+                "submission_id": sub_id
+            })
+        
+        else:
+
+            result_dict = await request.json()
+            
+            form_id = result_dict.get("formId")
+            
+            # 插入提交記錄
+            insert_sub = """
+            INSERT INTO form_submissions (form_id, submitter_user_id)
+            VALUES (%s, %s)
+            """
+            cursor.execute(insert_sub, (form_id, user_id))
+            conn.commit() 
+            sub_id = cursor.lastrowid
+            
+            # 從 answers 物件中處理答案
+            answers = result_dict.get("answers", {})
+            
+            for question_key, answer_data in answers.items():
+                # 從 question_key (如 "q1") 提取問題序號
+                question_order = int(question_key.replace("q", ""))
+                
+                # 查詢問題 ID
+                question_id_query = """
+                SELECT id FROM form_questions
+                WHERE form_id = %s AND question_order = %s
+                """
+                cursor.execute(question_id_query, (form_id, question_order))
+                question_result = cursor.fetchone()
+                
+                if not question_result:
+                    continue
+                    
+                question_id = question_result['id']
+                
+                # 初始化所有欄位為 NULL
+                answer_text = None
+                answer_option_id = None
+                
+                if answer_data['type'] == 'text':
+                    # 文字題：只填 answer_text
+                    answer_text = answer_data['value']
+                    
+                elif answer_data['type'] == 'choice':
+                    # 選擇題：只填 answer_option_id
+                    selected_value = answer_data.get('selectedValues')
+                    
+                    if selected_value:
+                        option_query = """
+                        SELECT id FROM question_options
+                        WHERE question_id = %s AND (label = %s OR value = %s)
+                        """
+                        cursor.execute(option_query, (question_id, selected_value, selected_value))
+                        option_result = cursor.fetchone()
+                        if option_result:
+                            answer_option_id = option_result['id']
+                
+                # 插入答案（移除 image_url 欄位）
+                insert_ans = """
+                INSERT INTO form_answers 
+                (submission_id, question_id, answer_text, answer_option_id)
+                VALUES (%s, %s, %s, %s)
+                """
+                cursor.execute(insert_ans, (
+                    sub_id, 
+                    question_id, 
+                    answer_text,
+                    answer_option_id
+                ))
+            
+            conn.commit()
+            
+            return JSONResponse(content={
+                "success": True, 
+                "message": "表單提交成功",
+                "submission_id": sub_id
+            })
+            
     except Exception as e:
-        conn.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+        print(e)
+        if conn:
+            conn.rollback()
+        return JSONResponse(
+            status_code=500, 
+            content={"error": f"提交失敗: {str(e)}"}
+        )
     finally:
-        cursor.close()
-        conn.close()
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
