@@ -43,8 +43,10 @@ const checkControl = {
     try {
       await checkModel.check();
       checkView.changeMemberButton(); 
-    } catch (error) {
-      localStorage.removeItem('token')
+    }catch (error) {
+      if (error.message === "Token 無效或已過期" || error.message === "Token 已失效或已登出") {
+        localStorage.removeItem('token');
+      }
       checkView.changeLoginButton();
     }
   }

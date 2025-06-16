@@ -13,7 +13,7 @@ const questionModel = {
 			});
 
 			const questionData = await req.json();
-
+			console.log(questionData)
 			if(!questionData.ok){
 				throw new Error(questionData.message);
 			};

@@ -371,3 +371,444 @@ th {
     color: var(--gray);
     font-size: 14px;
 }
+
+/* ===== 現代化表格行 ===== */
+.modern-card-row {
+    background: var(--white-color);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 182, 39, 0.1);
+    overflow: hidden;
+}
+
+.modern-card-row.hovered {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.modern-card-row td {
+    padding: 20px 16px;
+    border: none;
+    vertical-align: middle;
+    position: relative;
+}
+
+/* ===== 圖片相關樣式 ===== */
+.image-cell {
+    width: 80px;
+    padding: 12px !important;
+}
+
+.image-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.pet-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+}
+
+.image-container:hover .image-overlay {
+    opacity: 1;
+}
+
+.image-container:hover .pet-image {
+    transform: scale(1.1);
+}
+
+.icon-view {
+    font-size: 20px;
+    color: white;
+}
+
+/* ===== ID 徽章 ===== */
+.id-badge {
+    background: linear-gradient(135deg, var(--main-color), var(--accent-color));
+    color: var(--white-color);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(255, 182, 39, 0.3);
+    display: inline-block;
+}
+
+/* ===== 名稱容器 ===== */
+.name-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pet-name {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--dark-text);
+    line-height: 1.2;
+}
+
+.pet-info {
+    color: var(--gray);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* ===== 狀態徽章 ===== */
+.status-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.status-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.status-adopted {
+    background: linear-gradient(135deg, var(--light-color), var(--gray-light));
+    color: var(--dark-text);
+    border: 1px solid var(--main-color);
+}
+
+.status-available {
+    background: linear-gradient(135deg, var(--light-color), var(--gray-light));
+    color: var(--dark-text);
+    border: 1px solid var(--accent-color);
+}
+
+.adopter-name {
+    font-size: 16px;
+    color: var(--dark-text);
+    font-weight: 700;
+}
+
+/* ===== 現代化按鈕 ===== */
+.modern-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+}
+
+.modern-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    transition: left 0.5s;
+}
+
+.modern-btn:hover::before {
+    left: 100%;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--main-color), var(--accent-color));
+    color: var(--white-color);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 182, 39, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--main-color), var(--accent-color));
+    color: var(--white-color);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 182, 39, 0.4);
+}
+
+.btn-danger {
+    background: red;
+    color: var(--white-color);
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 102, 102, 0.4);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--accent-color), var(--main-color));
+    color: var(--white-color);
+}
+
+.btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 148, 0, 0.4);
+}
+
+.btn-small {
+    padding: 8px 16px;
+    font-size: 13px;
+}
+
+/* ===== 等待徽章 ===== */
+.waiting-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    color: var(--gray-dark);
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+/* ===== 操作容器 ===== */
+.action-container {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* ===== 送養人容器 ===== */
+.owner-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.owner-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--main-color), var(--accent-color));
+    color: var(--white-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    box-shadow: 0 2px 8px rgba(255, 182, 39, 0.3);
+}
+
+.owner-name {
+    font-weight: 700;
+    color: var(--dark-text);
+    font-size: 16px;
+}
+
+/* ===== 填寫狀態徽章 ===== */
+.fill-status-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.fill-status-badge.filled {
+    background: linear-gradient(135deg, var(--light-color), var(--gray-light));
+    color: var(--dark-text);
+    border: 1px solid var(--main-color);
+}
+
+.fill-status-badge.not-filled {
+    background: linear-gradient(135deg, var(--gray-light), var(--light-color));
+    color: var(--gray-dark);
+    border: 1px solid var(--gray);
+}
+
+/* ===== 圖示樣式 ===== */
+.icon {
+    width: 25px;
+    height: 25px;
+}
+
+/* ===== 表格整體樣式優化 ===== */
+table {
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    width: 100%;
+}
+
+table thead th {
+    background: linear-gradient(135deg, var(--main-color), var(--accent-color));
+    color: var(--white-color);
+    padding: 16px;
+    font-weight: 700;
+    text-align: left;
+    border: none;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+table thead th:first-child {
+    border-radius: 12px 0 0 12px;
+}
+
+table thead th:last-child {
+    border-radius: 0 12px 12px 0;
+}
+
+/* ===== 響應式設計 ===== */
+@media (max-width: 768px) {
+    .modern-card-row td {
+        padding: 12px 8px;
+    }
+    
+    .action-container {
+        flex-direction: column;
+    }
+    
+    .modern-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .owner-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .image-cell {
+        width: 60px;
+    }
+    
+    .image-container {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .pet-name {
+        font-size: 16px;
+    }
+    
+    .id-badge {
+        font-size: 12px;
+        padding: 4px 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .modern-card-row td {
+        padding: 8px 4px;
+    }
+    
+    .action-container {
+        gap: 4px;
+    }
+    
+    .modern-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    
+    .btn-small {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+}
+
+/* ===== 動畫效果 ===== */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modern-card-row {
+    animation: slideInUp 0.3s ease-out;
+}
+
+/* ===== 載入動畫 ===== */
+@keyframes shimmer {
+    0% {
+        background-position: -200px 0;
+    }
+    100% {
+        background-position: calc(200px + 100%) 0;
+    }
+}
+
+.loading-shimmer {
+    background: linear-gradient(90deg, var(--gray-light) 25%, transparent 50%, var(--gray-light) 75%);
+    background-size: 200px 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+/* ===== 無障礙設計 ===== */
+.modern-btn:focus {
+    outline: 2px solid var(--main-color);
+    outline-offset: 2px;
+}
+
+.modern-btn:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* ===== 打印樣式 ===== */
+@media print {
+    .modern-card-row {
+        box-shadow: none;
+        border: 1px solid var(--gray);
+        break-inside: avoid;
+    }
+    
+    .modern-btn {
+        display: none;
+    }
+    
+    .image-overlay {
+        display: none;
+    }
+}

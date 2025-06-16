@@ -62,9 +62,11 @@ async def get_advertise_for_adoption(request:Request):
 		user_id = user_data.get("userid")
 		select_want_to_adopt_quary = """
 		SELECT 
-			s.*,
+			s.id,
+			s.pet_name,
 			u.name AS user_name, 
 			u.email AS user_email,
+			u.id AS user_id,
 			l.liked_at AS time,
 				JSON_ARRAYAGG(i.img_url) AS images
 			FROM send AS s
@@ -115,12 +117,13 @@ async def get_want_to_adopt(request:Request):
 		user_id = user_data.get("userid")
 		select_query = """
 		SELECT
-			s.id               AS pet_id,
+			s.id,
 			s.pet_name,
 			s.pet_kind,
 			s.pet_breed,
 			GROUP_CONCAT(i.img_url) AS images,
-			su.name             AS sender_name
+			su.name             AS sender_name,
+			l.user_id          AS adopter_id
 		FROM likes AS l
 			JOIN send AS s
 			ON l.send_id = s.id
@@ -140,7 +143,7 @@ async def get_want_to_adopt(request:Request):
 
 		cursor.execute(select_query,(user_id,))
 		data = cursor.fetchall()
-
+		
 		return JSONResponse({"ok":True, "data":data}, status_code=200)
 	
 	except Exception as e:
@@ -152,20 +155,3 @@ async def get_want_to_adopt(request:Request):
 			cursor.close()
 		if conn:
 			conn.close()
-
-@router.get("/api/question&ans/{post_id}")
-async def get_ans_data(request:Request):
-	conn = None
-	cursor = None
-
-	try:
-		conn = mysql_pool.get_connection()
-		cursor = conn.cursor(dictionary = True)
-
-		
-
-
-	except Exception as e:
-		print(e)
-	finally:
-		pass

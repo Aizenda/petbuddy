@@ -2,6 +2,7 @@ import boto3,os,uuid
 from io import BytesIO
 from dotenv import load_dotenv
 from .db_connect import mysql_pool
+import asyncio
 
 load_dotenv()
 
