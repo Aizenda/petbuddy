@@ -49,9 +49,6 @@ const indexControl = {
 		indexView.element.otherLink.addEventListener('click', ()=>{
 			window.location.href = '/publicAdoption?kind=其他'
 		})
-		indexView.element.all.addEventListener('click', ()=>{
-			window.location.href = '/publicAdoption?kind='
-		})
 	}
 }
 

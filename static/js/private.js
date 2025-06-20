@@ -21,7 +21,7 @@ const privateModel = {
 
 const privateView = {
   createCardElement(item) {
-    console.log(item)
+
     const card = document.createElement("div");
     card.classList.add("card");
 

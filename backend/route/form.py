@@ -126,7 +126,6 @@ async def get_form(post_id: int, request:Request):
         if not user_data:
             return JSONResponse(status_code=401, content={"error": "未授權"})
 
-        print(user_data)
         cursor.execute("""
           SELECT 
             id   AS formId,
@@ -229,6 +228,12 @@ async def submit(request: Request):
         totalQuestions = int(result_dict["totalQuestions"])
         form_id = result_dict["formId"]
 
+        check_user = """
+        SELECT user_id, send_id FROM likes
+        WHERE user_id = %s AND sen_id = %s;
+        """
+        print(form_data)
+
         select_user= """
         SELECT s.user_id, f.*
         FROM send AS s
@@ -241,7 +246,6 @@ async def submit(request: Request):
         if check_data is not None:
             return JSONResponse({"ok":False, "message":"送養人無法填表"},status_code=409)
         
-        print(user_id,form_id)
         check_submissions_select = """
         SELECT submitter_user_id FROM form_submissions
         WHERE submitter_user_id = %s AND form_id = %s;
@@ -251,6 +255,7 @@ async def submit(request: Request):
 
         if check_submissions is not None:
             return JSONResponse({"ok":False, "message":"請勿重複填表"},status_code=409)
+        
 
         insert_submissions = """
         INSERT INTO form_submissions (form_id, submitter_user_id)
@@ -593,3 +598,118 @@ async def ans_data(post_id: int, user_id: int, request: Request):
             cursor.close()
         if conn:
             conn.close()
+
+@router.post("/api/complete-adoption/{send_id}")
+async def complete_adoption(send_id: int, request: Request):
+    conn = None
+    cursor = None
+    try:
+        conn = mysql_pool.get_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # 1. 取得送養貼文
+        cursor.execute("SELECT * FROM send WHERE id = %s", (send_id,))
+        send_data = cursor.fetchone()
+
+        if not send_data:
+            return JSONResponse({"ok": False, "message": "送養貼文不存在"}, status_code=404)
+
+        # 2. 插入到 send_history
+        insert_history_query = """
+        INSERT INTO send_history (
+            original_send_id, user_id, pet_name, pet_breed, pet_kind, pet_sex,
+            pet_bodytype, pet_colour, pet_place, pet_describe,
+            pet_ligation_status, pet_age, created_at
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """
+        print(send_data)
+
+        cursor.execute(insert_history_query, (
+            send_data['id'],
+            send_data['user_id'],
+            send_data['pet_name'],
+            send_data['pet_breed'],
+            send_data['pet_kind'],
+            send_data['pet_sex'],
+            send_data['pet_bodytype'],
+            send_data['pet_colour'],
+            send_data['pet_place'],
+            send_data['pet_describe'],
+            send_data['pet_ligation_status'],
+            send_data['pet_age'],
+            send_data['created_at']
+        ))
+
+        # 3. 取得剛插入的歷史 send_history.id
+        history_send_id = cursor.lastrowid
+
+        # 4. 取得所有圖片
+        cursor.execute("SELECT img_url FROM imgurl WHERE send_id = %s", (send_id,))
+        img_list = cursor.fetchall()
+
+        # 5. 複製到 imgurl_history
+        for img in img_list:
+            cursor.execute("INSERT INTO imgurl_history (send_id, img_url) VALUES (%s, %s)", (history_send_id, img['img_url']))
+
+        # 6. 刪除原始資料
+        cursor.execute("DELETE FROM imgurl WHERE send_id = %s", (send_id,))
+        cursor.execute("DELETE FROM likes WHERE send_id = %s", (send_id,))
+        cursor.execute("DELETE FROM send WHERE id = %s", (send_id,))
+
+        conn.commit()
+        return JSONResponse({"ok": True, "message": "送養已完成並搬移至歷史紀錄"}, status_code=200)
+
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        return JSONResponse({"ok": False, "message": str(e)}, status_code=500)
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+@router.delete("/api/cancel-adoption/{send_id}")
+async def cancel_adoption(send_id: int, request: Request):
+    conn = None
+    cursor = None
+    try:
+        conn = mysql_pool.get_connection()
+        cursor = conn.cursor()
+
+        # 驗證登入者身份
+        token = request.headers.get("Authorization", "").replace("Bearer ", "")
+        user_data = JWT.decode_jwt(token)
+
+        if not user_data:
+            return JSONResponse({"ok": False, "message": "未登入"}, status_code=401)
+
+        user_id = user_data["userid"]
+
+        # 確認這篇貼文是此使用者發的
+        cursor.execute("SELECT id FROM send WHERE id = %s AND user_id = %s", (send_id, user_id))
+        check = cursor.fetchone()
+        if not check:
+            return JSONResponse({"ok": False, "message": "你無權刪除此貼文"}, status_code=403)
+
+        # 依序刪除資料
+        cursor.execute("DELETE FROM imgurl WHERE send_id = %s", (send_id,))
+        cursor.execute("DELETE FROM likes WHERE send_id = %s", (send_id,))
+        cursor.execute("DELETE FROM send WHERE id = %s", (send_id,))
+
+        conn.commit()
+        return JSONResponse({"ok": True, "message": "已成功取消刊登"}, status_code=200)
+
+    except Exception as e:
+        if conn:
+            conn.rollback()
+        return JSONResponse({"ok": False, "message": str(e)}, status_code=500)
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+

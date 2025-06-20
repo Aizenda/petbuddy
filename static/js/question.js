@@ -13,7 +13,6 @@ const questionModel = {
 			});
 
 			const questionData = await req.json();
-			console.log(questionData)
 			if(!questionData.ok){
 				throw new Error(questionData.message);
 			};
@@ -552,6 +551,7 @@ const questionView = {
 	showSuccessMessage(title, message) {
 			alert(`✅ ${title}\n${message}`);
 			console.log(`成功: ${title} - ${message}`);
+			
 	},
 	showErrorMessage(title, errors) {
 			const errorText = Array.isArray(errors) ? errors.join('\n') : errors;
@@ -579,13 +579,20 @@ const questionControl = {
 
 		save.addEventListener("click",async ()=>{
 			const data = questionView.collectFormData();
-			console.log(data)
 			const validate = questionView.validateFormData(data);
 			if(validate.length !== 0){
 				alert(validate);
 				return;
 			};
-			const req = await questionModel.saveForm(data);
+			try{
+				const req = await questionModel.saveForm(data);
+				if(req.ok){
+					window.location.href = "/member";
+				}
+			}catch(error){
+				alert(error.message);
+			}
+			
 		});
 	}
 

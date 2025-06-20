@@ -703,10 +703,11 @@ async function getData() {
 			window.location.href = '/login';
 			return;
 	};
-	const postId =localStorage.getItem("postId") ;
+
 	const path = window.location.pathname;
-	if(path === "/read"){
+	if(path === "/read" || path === "/revise"){
 		try{
+			const postId =localStorage.getItem("postId") ;
 			const req = await fetch(`/api/form/${postId}`, {
 					method: "GET",
 					headers: {
@@ -727,6 +728,7 @@ async function getData() {
 		};
 	};
 	try{
+			const postId =path.split("/").pop();
 			const req = await fetch(`/api/form/${postId}`, {
 					method: "GET",
 					headers: {
@@ -734,7 +736,7 @@ async function getData() {
 					},
 			});
 			const data = await req.json();
-			console.log(data)
+		
 			if(!data.ok){
 					throw Error(data.message);
 			};

@@ -141,7 +141,6 @@ const publicControl = {
       const result = await publicModel.getPublic(true);
       publicView.renderCards(result.data, true);
       publicView.renderPagination(result.pages, result.current_page);
-      console.log(result.current_page);
     } catch (err) {
       alert(err.message);
     } finally {

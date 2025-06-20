@@ -46,6 +46,7 @@ const checkControl = {
     }catch (error) {
       if (error.message === "Token 無效或已過期" || error.message === "Token 已失效或已登出") {
         localStorage.removeItem('token');
+        window. location.href = "/login"
       }
       checkView.changeLoginButton();
     }

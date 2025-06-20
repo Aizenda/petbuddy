@@ -28,7 +28,7 @@
     <div class="container">
         <div class="header">
             <div class="header-content">
-                <img src="/static/img/user (1).png" class="avatar">
+                <img src="/static/img/user.png" class="avatar" id="headerAvatar">
                 <div class="user-info">
                     <h1 id="name"></h1>
                     <p id="time"></p>
@@ -41,9 +41,9 @@
                 <h3>會員功能</h3>
                 <ul>
                     <li><a class="nav-link active" data-section="dashboard">會員概覽</a></li>
+                    <li><a class="nav-link" data-section="applications">我的刊登</a></li>
+                    <li><a class="nav-link" data-section="history">歷史資料</a>
                     <li><a class="nav-link" data-section="profile">個人資料</a></li>
-                    <li><a class="nav-link" data-section="applications">我的表單</a></li>
-                    <li><a class="nav-link" data-section="settings">帳號設定</a></li>
                 </ul>
             </div>
 
@@ -89,165 +89,131 @@
                 <!-- 個人資料 -->
                 <div class="section" id="profile">
                     <h2>個人資料</h2>
+                    
+                    <!-- 大頭貼更新區域 -->
+                    <div class="avatar-section">
+                        <h3 style="color: var(--main-color); margin-bottom: 15px;">大頭貼</h3>
+                        <div class="avatar-container">
+                            <div class="avatar-preview">
+                                <img id="avatarPreview" src="/static/img/user.png" alt="大頭貼預覽">
+                                <div class="avatar-overlay">
+                                    <i class="upload-icon">📷</i>
+                                    <span>點擊更換</span>
+                                </div>
+                            </div>
+                            <div class="avatar-controls">
+                                <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+                                <button type="button" class="btn-upload">上傳照片</avatarPreview>
+                                <button type="button" class="btn-remove">移除預覽</button>
+                                <p class="upload-hint">支援 JPG, PNG 格式，檔案大小不超過 5MB</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 原有的個人資料表單 -->
                     <form>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                             <div class="form-group">
                                 <label>姓名</label>
-                                <input type="text" value="王小明">
+                                <input type="text" id="name2" placeholder="姓名">
                             </div>
                             <div class="form-group">
                                 <label>電話</label>
-                                <input type="tel" value="0912-345-678">
+                                <input type="tel" id="phone" placeholder="電話號碼">
                             </div>
                         </div>
                         <div class="form-group">
                             <label>電子信箱</label>
-                            <input type="email" value="wang@email.com">
+                            <input type="email" id="email" placeholder="emai">
                         </div>
                         <div class="form-group">
                             <label>地址</label>
-                            <input type="text" value="台北市大安區復興南路一段">
+                            <input type="text" id="address" placeholder="住宅地址">
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                             <div class="form-group">
                                 <label>職業</label>
-                                <input type="text" value="軟體工程師">
+                                <input type="text" id="profession" placeholder="ex:軟體工程師">
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" >
                                 <label>居住狀況</label>
-                                <select>
-                                    <option>自有住宅</option>
-                                    <option>租屋</option>
-                                    <option>家人住宅</option>
+                                <select id="live">
+                                    <option value="自有住宅" >自有住宅</option>
+                                    <option value="租屋">租屋</option>
+                                    <option value="家人住宅">家人住宅</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
                             <label>養寵物經驗</label>
-                            <textarea rows="4" placeholder="請描述您的養寵物經驗...">曾經養過貓咪5年，對寵物照護有一定經驗。</textarea>
+                            <textarea rows="4" placeholder="請描述您的養寵物經驗..." maxlength="255" id="text"></textarea>
                         </div>
-                        <button type="submit" class="btn-2">更新資料</button>
+                        <button type="submit" class="btn-2" id="update_user">更新個人資料</button>
                     </form>
+
+                    <!-- 修改密碼區域 -->
+                    <div style="margin-top: 30px;">
+                        <h3 style="color: var(--main-color); margin-bottom: 15px;">修改密碼</h3>
+                        <div class="form-group">
+                            <label>目前密碼</label>
+                            <input type="password" id="old_password">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group">
+                                <label>新密碼</label>
+                                <input type="password" id="newpassword">
+                            </div>
+                            <div class="form-group">
+                                <label>確認新密碼</label>
+                                <input type="password" id="check_new_password">
+                            </div>
+                        </div>
+                        <button class="btn-2" id="update_passwore">更新密碼</button>
+                    </div>
                 </div>
 
                 <!-- 領養申請 -->
                 <div class="section" id="applications">
-                    <h2>領養申請記錄</h2>
-                    <div class="application-item">
-                        <div class="application-header">
-                            <strong>小橘 - 橘貓</strong>
-                            <span class="pet-status status-pending">審核中</span>
-                        </div>
-                        <div class="application-date">申請日期：2024年5月20日</div>
-                        <p>申請狀態：已通過初步審核，等待家訪安排</p>
-                        <button class="btn-2" style="margin-top: 10px;">查看詳情</button>
-                    </div>
-                    <div class="application-item">
-                        <div class="application-header">
-                            <strong>小白 - 柴犬</strong>
-                            <span class="pet-status status-adopted">已完成</span>
-                        </div>
-                        <div class="application-date">申請日期：2024年3月15日</div>
-                        <p>申請狀態：領養完成</p>
-                        <button class="btn-2-secondary btn-2" style="margin-top: 10px;">查看證書</button>
+                    <h2>刊登資料</h2>
+                    <div class="stats-grid" id="my-listings">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>寵物圖片</th>
+                                    <th>寵物編號</th>
+                                    <th>寵物名稱</th>
+                                    <th>刊登狀態</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-3">
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
-                <!-- 我的最愛 -->
-                <div class="section" id="favorites">
-                    <h2>我的最愛寵物</h2>
-                    <div class="pet-grid">
-                        <div class="pet-card">
-                            <div class="pet-image">🐱</div>
-                            <div class="pet-info">
-                                <div class="pet-name">小花</div>
-                                <div class="pet-details">品種：三花貓 | 年齡：2歲 | 性別：母</div>
-                                <div class="pet-status status-pending">等待領養</div>
-                            </div>
-                        </div>
-                        <div class="pet-card">
-                            <div class="pet-image">🐕</div>
-                            <div class="pet-info">
-                                <div class="pet-name">小黑</div>
-                                <div class="pet-details">品種：拉布拉多 | 年齡：3歲 | 性別：公</div>
-                                <div class="pet-status status-pending">等待領養</div>
-                            </div>
-                        </div>
-                        <div class="pet-card">
-                            <div class="pet-image">🐰</div>
-                            <div class="pet-info">
-                                <div class="pet-name">小兔</div>
-                                <div class="pet-details">品種：荷蘭兔 | 年齡：1歲 | 性別：母</div>
-                                <div class="pet-status status-pending">等待領養</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 已領養寵物 -->
-                <div class="section" id="adopted">
-                    <h2>我的寵物家庭</h2>
-                    <div class="pet-grid">
-                        <div class="pet-card">
-                            <div class="pet-image">🐕</div>
-                            <div class="pet-info">
-                                <div class="pet-name">小白</div>
-                                <div class="pet-details">品種：柴犬 | 年齡：4歲 | 領養日期：2024年4月1日</div>
-                                <div class="pet-status status-adopted">已領養</div>
-                                <button class="btn-2" style="margin-top: 10px; width: 100%;">健康記錄</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 帳號設定 -->
-                <div class="section" id="settings">
-                    <h2>帳號設定</h2>
-                    <div style="display: grid; gap: 30px;">
-                        <div>
-                            <h3 style="color: var(--main-color); margin-bottom: 15px;">通知設定</h3>
-                            <div style="display: grid; gap: 10px;">
-                                <label style="display: flex; align-items: center; gap: 10px;">
-                                    <input type="checkbox" checked> 新寵物上架通知
-                                </label>
-                                <label style="display: flex; align-items: center; gap: 10px;">
-                                    <input type="checkbox" checked> 申請狀態更新通知
-                                </label>
-                                <label style="display: flex; align-items: center; gap: 10px;">
-                                    <input type="checkbox"> 活動資訊通知
-                                </label>
-                                <label style="display: flex; align-items: center; gap: 10px;">
-                                    <input type="checkbox"> 電子報訂閱
-                                </label>
-                            </div>
-                        </div>
-                        <div>
-                            <h3 style="color: var(--main-color); margin-bottom: 15px;">修改密碼</h3>
-                            <div class="form-group">
-                                <label>目前密碼</label>
-                                <input type="password">
-                            </div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                                <div class="form-group">
-                                    <label>新密碼</label>
-                                    <input type="password">
-                                </div>
-                                <div class="form-group">
-                                    <label>確認新密碼</label>
-                                    <input type="password">
-                                </div>
-                            </div>
-                            <button class="btn-2">更新密碼</button>
-                        </div>
+                <div class="section" id="history">
+                    <h2>歷史送養資料</h2>
+                    <div class="stats-grid" id="my-listings">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>寵物圖片</th>
+                                    <th>寵物編號</th>
+                                    <th>寵物名稱</th>
+                                    <th>完成送養日期</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-4">
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <script></script>
     <script src = "/static/js/member.js"></script>
     <script src="/static/js/header.js"></script>
 	<script src="/static/js/check.js"></script>
+    <script src="/static/js/update_user.js"></script>
 </body>
 </html>

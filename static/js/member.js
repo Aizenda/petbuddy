@@ -88,12 +88,130 @@ const memberModel = {
 			if(!formData.ok){
 				throw new Error(formData.message);
 			}
+
 			return formData;
 
 		}catch(error){
 			console.log(error);
 			alert(error)
 			return;
+		}
+	},
+	async cancel(data){
+		const token = localStorage.getItem("token")
+		const cancelData = data
+		try{
+			const req = await fetch(`/api/cancel_adoption?post_id=${cancelData.id}&adopter_id=${cancelData.adopter_id}`,{
+				method:"DELETE",
+				headers:{
+					"Authorization": `Bearer ${token}`,
+					"Content-Type": "application/json"
+				}
+			});
+
+			const data = await req.json();
+
+			if(!data.ok){
+				throw new Error(data.message)
+			}
+
+			return data;
+
+		}catch(error){
+			alert(error.message);
+			return;
+		}
+	},
+	async getAllData(){
+		const token = localStorage.getItem("token")
+		try{
+			const req = await fetch("/api/get_all_data",{
+				method:"GET",
+				headers:{
+					"Authorization": `Bearer ${token}`,
+					"Content-Type": "application/json"
+				}
+			});
+			const data = await req.json();
+			if(!data.ok){
+				throw new Error(data.message);
+			};
+
+			return data;
+
+		}catch (error) {
+			alert(error.message);
+			return
+		}
+	},
+	async finish_sen(data){
+		const token = localStorage.getItem("token")
+		const postData = data
+		try{
+			const req = await fetch(`/api/complete-adoption/${postData.send_id}`,{
+				method:"POST",
+				headers:{
+					"Authorization": `Bearer ${token}`,
+					"Content-Type": "application/json"
+				}
+			});
+			const data = await req.json();
+
+			if(!data.ok){
+				throw new Error(data.message);
+			};
+
+			return data;
+
+		}catch (error) {
+			alert(error.message);
+			return
+		}
+	},
+	async delete_sen(data){
+		const token = localStorage.getItem("token")
+		const postData = data
+		try{
+			const req = await fetch(`/api/cancel-adoption/${postData.send_id}`,{
+				method:"DELETE",
+				headers:{
+					"Authorization": `Bearer ${token}`,
+					"Content-Type": "application/json"
+				}
+			});
+			const data = await req.json();
+
+			if(!data.ok){
+				throw new Error(data.message);
+			};
+
+			return data;
+
+		}catch (error) {
+			alert(error.message);
+			return
+		}
+	},
+	async getHistor(){
+		const token = localStorage.getItem("token")
+		try{
+			const req = await fetch("/api/get_histor",{
+				method:"GET",
+				headers:{
+					"Authorization": `Bearer ${token}`,
+					"Content-Type": "application/json"
+				}
+			});
+			const data = await req.json();
+			if(!data.ok){
+				throw new Error(data.message);
+			};
+
+			return data;
+
+		}catch (error) {
+			alert(error.message);
+			return
 		}
 	}
 }
@@ -104,8 +222,9 @@ const memberView = {
 		time:document.getElementById("time"),
 		adoption:document.getElementById("adoption"),
 		tboday:document.querySelector("#tbody-1"),
-		tboday2:document.querySelector("#tbody-2")
-
+		tboday2:document.querySelector("#tbody-2"),
+		tboday3:document.querySelector("#tbody-3"),
+		tboday4:document.querySelector("#tbody-4"),
 	},
 	showBar(){
 		const navLinks = document.querySelectorAll('.nav-link');
@@ -131,7 +250,6 @@ const memberView = {
 	},
 	renderAdvertiseCards(data, formData) {
 			const tbody = this.element.tboday;
-			
 			// 創建卡片式表格行
 			const tr = document.createElement("tr");
 			tr.classList.add("modern-card-row", "advertise-row");
@@ -153,7 +271,8 @@ const memberView = {
 			
 			const idBadge = document.createElement("span");
 			idBadge.classList.add("id-badge");
-			idBadge.textContent = `#${data.id}`;
+		
+			idBadge.textContent = `#${data.send_id}`;
 			
 			td1.appendChild(idBadge);
 			tr.appendChild(td1);
@@ -162,15 +281,14 @@ const memberView = {
 			const td2 = document.createElement("td");
 			td2.classList.add("name-cell");
 			
-			const nameContainer = this.createNameContainer(data.pet_name, data.species, data.age);
+			const nameContainer = this.createNameContainer(data.pet_name);
 			td2.appendChild(nameContainer);
 			tr.appendChild(td2);
 			
 			// 領養狀態列
 			const td3 = document.createElement("td");
 			td3.classList.add("status-cell");
-			
-			const statusContainer = this.createAdoptionStatusContainer(data.user_name);
+			const statusContainer = this.createAdoptionStatusContainer(data.liker_name);
 			td3.appendChild(statusContainer);
 			tr.appendChild(td3);
 			
@@ -188,13 +306,12 @@ const memberView = {
 			const td5 = document.createElement("td");
 			td5.classList.add("action-cell");
 			
-			const actionContainer = this.createAdvertiseActionContainer();
+			const actionContainer = this.createAdvertiseActionContainer(data.phone,formData);
 			td5.appendChild(actionContainer);
 			tr.appendChild(td5);
 			
 			tbody.appendChild(tr);
 	},
-
 	renderAdoptCards(data, formData) {
 			const tbody = this.element.tboday2;
 			
@@ -219,7 +336,8 @@ const memberView = {
 			
 			const idBadge = document.createElement("span");
 			idBadge.classList.add("id-badge");
-			idBadge.textContent = `#${data.id}`;
+			
+			idBadge.textContent = `#${data.send_id}`;
 			
 			td1.appendChild(idBadge);
 			tr.appendChild(td1);
@@ -254,22 +372,112 @@ const memberView = {
 			const td5 = document.createElement("td");
 			td5.classList.add("action-cell");
 			
-			const actionContainer = this.createAdoptActionContainer();
+			const actionContainer = this.createAdoptActionContainer(data);
 			td5.appendChild(actionContainer);
 			tr.appendChild(td5);
 			
 			tbody.appendChild(tr);
 	},
+	renderThirdTableCards(data) {
+	const tbody = this.element.tboday3;
+	// 創建卡片式表格行
+	const tr = document.createElement("tr");
+	tr.classList.add("modern-card-row", "third-table-row");
 	
-	addHoverEffects(element) {
-			element.addEventListener('mouseenter', () => {
-					element.classList.add('hovered');
-			});
-			
-			element.addEventListener('mouseleave', () => {
-					element.classList.remove('hovered');
-			});
-	},
+	// 添加懸停效果事件
+	this.addHoverEffects(tr);
+	
+	// 寵物圖片列
+	const td0 = document.createElement("td");
+	td0.classList.add("image-cell");
+	
+	const imageContainer = this.createImageContainer(data, 'images');
+	td0.appendChild(imageContainer);
+	tr.appendChild(td0);
+	
+	// 寵物編號列
+	const td1 = document.createElement("td");
+	td1.classList.add("id-cell");
+	
+	const idBadge = document.createElement("span");
+	idBadge.classList.add("id-badge");
+
+	idBadge.textContent = `#${data.send_id}`;
+	td1.appendChild(idBadge);
+	tr.appendChild(td1);
+	
+	// 寵物名稱列
+	const td2 = document.createElement("td");
+	td2.classList.add("name-cell");
+	
+	const nameContainer = this.createNameContainer(data.pet_name, null, null, "第三表格的寵物");
+	td2.appendChild(nameContainer);
+	tr.appendChild(td2);
+	
+	// 操作列
+	const td5 = document.createElement("td");
+	td5.classList.add("action-cell");
+	const actionContainer = this.createTwoBotton(data);
+	td5.appendChild(actionContainer);
+	tr.appendChild(td5);
+	
+	tbody.appendChild(tr);
+},
+renderFourthTableCards(data) {
+	const tbody = this.element.tboday4;
+	// 創建卡片式表格行
+	const tr = document.createElement("tr");
+	tr.classList.add("modern-card-row", "third-table-row");
+	
+	// 添加懸停效果事件
+	this.addHoverEffects(tr);
+	
+	// 寵物圖片列
+	const td0 = document.createElement("td");
+	td0.classList.add("image-cell");
+	
+	const imageContainer = this.createImageContainerNotURL(data, 'images');
+	td0.appendChild(imageContainer);
+	tr.appendChild(td0);
+	
+	// 寵物編號列
+	const td1 = document.createElement("td");
+	td1.classList.add("id-cell");
+	
+	const idBadge = document.createElement("span");
+	idBadge.classList.add("id-badge");
+
+	idBadge.textContent = `#${data.send_id}`;
+	td1.appendChild(idBadge);
+	tr.appendChild(td1);
+	
+	// 寵物名稱列
+	const td2 = document.createElement("td");
+	td2.classList.add("name-cell");
+	
+	const nameContainer = this.createNameContainer(data.pet_name, null, null, "第三表格的寵物");
+	td2.appendChild(nameContainer);
+	tr.appendChild(td2);
+	
+	// 操作列
+	const td5 = document.createElement("td");
+	td5.classList.add("action-cell");
+	const actionContainer = document.createElement("span")
+	actionContainer.textContent = data.adopted_at;
+	td5.appendChild(actionContainer);
+	tr.appendChild(td5);
+	
+	tbody.appendChild(tr);
+},
+addHoverEffects(element) {
+	element.addEventListener('mouseenter', () => {
+			element.classList.add('hovered');
+	});
+	
+	element.addEventListener('mouseleave', () => {
+			element.classList.remove('hovered');
+	});
+},
 
 	// 創建圖片容器
 	createImageContainer(data, imageField) {
@@ -301,8 +509,44 @@ const memberView = {
 			// 添加圖片疊加效果
 			const imageDetails = document.createElement("a");
 			imageDetails.classList.add("image-overlay");
-			imageDetails.href = `/details/${data.id}`
+
+			imageDetails.href = `/details/${data.send_id}`
 		
+			imageContainer.appendChild(img);
+			imageContainer.appendChild(imageDetails);
+			
+			return imageContainer;
+	},
+
+	createImageContainerNotURL(data, imageField) {
+			const imageContainer = document.createElement("div");
+			imageContainer.classList.add("image-container");
+			
+			const img = document.createElement("img");
+			// 根據不同的圖片欄位處理
+			if (imageField === 'images') {
+					if (data.images) {
+							try {
+									const images = typeof data.images === 'string' ? JSON.parse(data.images) : data.images;
+									img.src = Array.isArray(images) ? images[0] : images.split(",")[0];
+							} catch (e) {
+									img.src = data.images.split(",")[0];
+							}
+					}
+			}
+			
+			img.classList.add("pet-image");
+			img.alt = `${data.pet_name || '寵物'}的照片`;
+			
+			// 圖片載入錯誤處理
+			img.addEventListener('error', () => {
+					img.src = '';
+					img.alt = '圖片載入失敗';
+			});
+			
+			// 添加圖片疊加效果
+			const imageDetails = document.createElement("div");
+			imageDetails.classList.add("image-overlay");
 			imageContainer.appendChild(img);
 			imageContainer.appendChild(imageDetails);
 			
@@ -372,12 +616,11 @@ const memberView = {
 					
 					const text = document.createElement("span");
 					text.textContent = "查看表單";
-					
 					btn.appendChild(icon);
 					btn.appendChild(text);
 					btn.addEventListener("click", () => {
 							localStorage.setItem("postId",formData.postId)
-							localStorage.setItem("user_id",formData.adoptId)
+							localStorage.setItem("userId",formData.adopterId)
 							window.location.href = "/read";
 					});
 					
@@ -403,7 +646,7 @@ const memberView = {
 					
 					return btn;
 					
-			} else if (!formData.adopterFilled && !formData.adoptId) {
+			} else if (!formData.adopterId) {
 					const waitingBadge = document.createElement("div");
 					waitingBadge.classList.add("waiting-badge");
 					
@@ -472,10 +715,10 @@ const memberView = {
 			
 			btn.appendChild(icon);
 			btn.appendChild(text);
-			console.log(formData)
+
 			btn.addEventListener("click", () => {
 				localStorage.setItem("postId",formData.postId)
-				localStorage.setItem("user_id",formData.adoptId)
+				localStorage.setItem("user_id",formData.adopterId)
 				window.location.href = "/revise"
 				;
 			});
@@ -539,49 +782,46 @@ const memberView = {
 	},
 
 	// 創建刊登送養操作容器
-	createAdvertiseActionContainer() {
+	createAdvertiseActionContainer(adopter_phone,formData) {
 			const actionContainer = document.createElement("div");
 			actionContainer.classList.add("action-container");
 			
 			const completeBtn = document.createElement("button");
 			completeBtn.classList.add("modern-btn", "btn-success", "btn-small");
-			
 			const completeIcon = document.createElement("img");
 			completeIcon.classList.add("icon");
-			completeIcon.src = "/static/img/check.png";
 			
 			const completeText = document.createElement("span");
-			completeText.textContent = "完成送養";
+
+			if (!adopter_phone || formData.adopterFilled === false){
+				completeIcon.src = "/static/img/cancelled.png";
+				completeText.textContent = "未留下聯絡資訊";;
+				
+			}else{
+				completeIcon.src = "/static/img/mobile.png";
+				completeText.textContent = "連絡他"; 
+				completeBtn.onclick = () => {
+					window.location.href = `tel:${adopter_phone}`
+				};
+			}
+
 			
 			completeBtn.appendChild(completeIcon);
 			completeBtn.appendChild(completeText);
-			
-			const cancelBtn = document.createElement("button");
-			cancelBtn.classList.add("modern-btn", "btn-danger", "btn-small");
-			
-			const cancelIcon = document.createElement("img");
-			cancelIcon.classList.add("icon");
-			cancelIcon.src = "/static/img/square.png";
-			
-			const cancelText = document.createElement("span");
-			cancelText.textContent = "取消刊登";
-			
-			cancelBtn.appendChild(cancelIcon);
-			cancelBtn.appendChild(cancelText);
+
 			
 			actionContainer.appendChild(completeBtn);
-			actionContainer.appendChild(cancelBtn);
 			
 			return actionContainer;
 	},
 
 	// 創建領養申請操作容器
-	createAdoptActionContainer() {
+	createAdoptActionContainer(data) {
 			const actionContainer = document.createElement("div");
 			actionContainer.classList.add("action-container");
 			
 			const cancelBtn = document.createElement("button");
-			cancelBtn.classList.add("modern-btn", "btn-warning", "btn-small");
+			cancelBtn.classList.add("modern-btn", "btn-success" ,"btn-small");
 			
 			const icon = document.createElement("img");
 			icon.classList.add("icon");
@@ -589,11 +829,73 @@ const memberView = {
 			
 			const text = document.createElement("span");
 			text.textContent = "取消領養";
-			
+		
+			cancelBtn.onclick = async ()=>{
+				const deleteLike = await memberModel.cancel(data);
+				
+				if(deleteLike){
+					alert("已取消領養申請");
+					location.reload();
+				}
+			}
+
 			cancelBtn.appendChild(icon);
 			cancelBtn.appendChild(text);
 			actionContainer.appendChild(cancelBtn);
+
+
 			
+			return actionContainer;
+	},
+		// 創建領養申請操作容器
+	createTwoBotton(data) {
+			const actionContainer = document.createElement("div");
+			actionContainer.classList.add("action-container");
+			
+			const cancelBtn1 = document.createElement("button");
+			cancelBtn1.classList.add("modern-btn", "btn-success" ,"btn-small");
+			const icon1 = document.createElement("img");
+			icon1.classList.add("icon");
+			icon1.src = "/static/img/check.png";
+			const text1= document.createElement("span");
+			text1.textContent = "完成送養";
+
+			const cancelBtn2 = document.createElement("button");
+			cancelBtn2.classList.add("modern-btn", "btn-success" ,"btn-small");
+			const icon2 = document.createElement("img");
+			icon2.classList.add("icon");
+			icon2.src = "/static/img/square.png";
+			const text2= document.createElement("span");
+			text2.textContent = "取消刊登";
+			cancelBtn1.onclick = async ()=>{
+				const deleteLike = await memberModel.finish_sen(data);
+				
+				if(deleteLike){
+					alert("已完成送養");
+					location.reload();
+				}
+			}
+
+			cancelBtn2.onclick = async ()=>{
+				if (!confirm("確定要取消刊登嗎？此操作將無法復原")) {
+					return;
+				}
+				const deleteLike = await memberModel.delete_sen(data);
+				
+				if(deleteLike){
+					alert("已取消刊登");
+					location.reload();
+				}
+			}
+
+			cancelBtn1.appendChild(icon1);
+			cancelBtn1.appendChild(text1);
+
+			cancelBtn2.appendChild(icon2);
+			cancelBtn2.appendChild(text2);
+
+			actionContainer.appendChild(cancelBtn1);
+			actionContainer.appendChild(cancelBtn2);
 			return actionContainer;
 	}
 }
@@ -609,10 +911,11 @@ const memberControl = {
 		const userData = [];
 		for (let i = 0; i < advertiseForAdoption.data.length; i++) {
 			userData.push({
-				postId: advertiseForAdoption.data[i].id,
-				adopterId: advertiseForAdoption.data[i].user_id
+				postId: advertiseForAdoption.data[i].send_id,
+				adopterId: advertiseForAdoption.data[i].liker_id
 			});
 		}
+
 		const formData = await memberModel.read_form(userData);
 		for (let i = 0; i < advertiseForAdoption.data.length; i++) {
 			memberView.renderAdvertiseCards(advertiseForAdoption.data[i], formData.data[i]);
@@ -622,17 +925,27 @@ const memberControl = {
 		const wantToAdoptUserData = [];
 		for (let i = 0; i < wantToAdopt.data.length; i++) {
 			wantToAdoptUserData.push({
-				postId: wantToAdopt.data[i].id,
+				postId: wantToAdopt.data[i].send_id,
 				adopterId: wantToAdopt.data[i].adopter_id
 			});
 		};
 
 		const wantToAdoptFormData = await memberModel.read_form(wantToAdoptUserData);
 		for (let i = 0; i < wantToAdopt.data.length; i++) {
-			console.log(wantToAdoptFormData.data[i])
 			memberView.renderAdoptCards(wantToAdopt.data[i], wantToAdoptFormData.data[i]);
+	
 		};
-		
+
+		const all_Data = await memberModel.getAllData();
+		for (let i = 0; i < all_Data.data.length; i++) {
+			memberView.renderThirdTableCards(all_Data.data[i]);
+		}
+
+		const historData = await memberModel.getHistor();
+		for (let i = 0; i < historData.data.length; i++) {
+			memberView.renderFourthTableCards(historData.data[i]);
+		}
+
 		memberView.renderUser(user);
 		this.logout();	
 	},
@@ -653,7 +966,7 @@ const memberControl = {
 			window.location.href = "/"
 			return;
 		}
-	}
+	},
 }
 
 memberControl.init()

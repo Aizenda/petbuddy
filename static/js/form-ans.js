@@ -299,7 +299,8 @@ function checkIfAnswered(answer, questionType) {
 
 
 const postId = localStorage.getItem("postId");
-const userId = localStorage.getItem("user_id");
+const userId = localStorage.getItem("userId");
+console.log(userId)
 async function answersData(postId,userId){
 
     const token = localStorage.getItem("token");

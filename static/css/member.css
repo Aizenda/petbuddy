@@ -99,6 +99,7 @@ th {
     color: var(--main-color);
     font-weight: bold;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    object-fit: cover;
 }
 
 .user-info h1 {
@@ -608,6 +609,7 @@ th {
     gap: 8px;
     flex-wrap: wrap;
     justify-content: center;
+    height: 49px;
 }
 
 /* ===== 送養人容器 ===== */
@@ -810,5 +812,130 @@ table thead th:last-child {
     
     .image-overlay {
         display: none;
+    }
+}
+
+.avatar-section {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    border: 1px solid #e9ecef;
+}
+
+.avatar-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.avatar-preview {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.avatar-preview:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.avatar-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.avatar-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.avatar-preview:hover .avatar-overlay {
+    opacity: 1;
+}
+
+.upload-icon {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.avatar-overlay span {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.avatar-controls {
+    flex: 1;
+    min-width: 200px;
+}
+
+.btn-upload, .btn-remove {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-upload {
+    background: var(--main-color, #4CAF50);
+    color: white;
+}
+
+.btn-upload:hover {
+    background: var(--hover-color, #45a049);
+    transform: translateY(-1px);
+}
+
+.btn-remove {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-remove:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+}
+
+.upload-hint {
+    color: #6c757d;
+    font-size: 12px;
+    margin: 10px 0 0 0;
+    line-height: 1.4;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .avatar-container {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .avatar-controls {
+        min-width: unset;
+        width: 100%;
     }
 }

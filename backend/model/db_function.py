@@ -64,6 +64,28 @@ create_table( """
 """)
 
 create_table("""
+CREATE TABLE IF NOT EXISTS send_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    original_send_id INT,  -- 注意：這裡不加 NOT NULL，讓它可以被設為 NULL
+    user_id INT NOT NULL,
+    pet_name VARCHAR(255) NOT NULL,
+    pet_breed VARCHAR(50),
+    pet_kind VARCHAR(50),
+    pet_sex VARCHAR(50),
+    pet_bodytype VARCHAR(50),
+    pet_colour VARCHAR(50),
+    pet_place VARCHAR(50),
+    pet_describe VARCHAR(255),
+    pet_ligation_status VARCHAR(50),
+    pet_age VARCHAR(50),
+    created_at DATETIME,
+    adopted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (original_send_id) REFERENCES send(id) ON DELETE NO ACTION
+);
+""")
+
+create_table("""
     CREATE TABLE IF NOT EXISTS imgurl(
         id INT AUTO_INCREMENT PRIMARY KEY,
         send_id INT NOT NULL,
@@ -71,6 +93,16 @@ create_table("""
         FOREIGN KEY (send_id) REFERENCES send(id) ON DELETE CASCADE
     );
 """)
+
+create_table("""
+CREATE TABLE IF NOT EXISTS imgurl_history (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    send_id INT NOT NULL,
+    img_url VARCHAR(255) NOT NULL,
+    FOREIGN KEY (send_id) REFERENCES send_history(id)
+);
+""")
+
 
 create_table( """
     CREATE TABLE IF NOT EXISTS likes (
@@ -149,3 +181,16 @@ create_queries = [
 ]
 for sql in create_queries:
     create_table(sql)
+
+
+create_table(
+"""
+ALTER TABLE users
+  ADD COLUMN avatar_url VARCHAR(255) NOT NULL DEFAULT '/static/img/user.png',
+  ADD COLUMN address VARCHAR(255) NULL,
+  ADD COLUMN occupation VARCHAR(100) NULL,
+  ADD COLUMN residence_status VARCHAR(50) NULL,
+  ADD COLUMN pet_experience TEXT NULL,
+  ADD COLUMN live VARCHAR(255);
+"""
+)

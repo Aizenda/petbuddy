@@ -27,7 +27,6 @@ class JWT:
 	def decode_jwt(token: str):
 		try:
 				payload = jwt.decode(token, key, algorithms=[ALGORITHM])
-				print(payload)
 				return payload
 		except jwt.ExpiredSignatureError:
 				return None

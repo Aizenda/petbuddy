@@ -40,13 +40,14 @@ function validateSubmissionData() {
                 errors.push(`圖片 "${answer.name}" 超過 5MB 限制`);
             }
             
-            // 嚴格檢查檔案格式（只允許 JPG/JPEG）
-            const allowedTypes = ['image/jpeg', 'image/jpg'];
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            const allowedExtensions = ['jpg', 'jpeg', 'png'];
+
             const fileType = answer.file.type.toLowerCase();
             const fileName = answer.file.name.toLowerCase();
-            const fileExtension = fileName.split('.').pop();
-            
-            if (!allowedTypes.includes(fileType) || !['jpg', 'jpeg','png'].includes(fileExtension)) {
+            const fileExtension = fileName.split('.').pop().toLowerCase();
+
+            if (!allowedTypes.includes(fileType) || !allowedExtensions.includes(fileExtension)) {
                 errors.push(`檔案 "${answer.name}" 必須是 JPG、JPEG、PNG 格式`);
             }
         }
@@ -69,12 +70,12 @@ function validateImageFile(file, questionKey) {
     }
     
     // 嚴格檢查檔案格式
-    const allowedTypes = ['image/jpeg', 'image/jpg'];
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
     const fileType = file.type.toLowerCase();
     const fileName = file.name.toLowerCase();
-    const fileExtension = fileName.split('.').pop();
+    const fileExtension = fileName.split('.').pop().toLowerCase();
     
-    if (!allowedTypes.includes(fileType) || !['jpg', 'jpeg'].includes(fileExtension)) {
+    if (!allowedTypes.includes(fileType) || !['jpg', 'jpeg','png'].includes(fileExtension)) {
         errors.push('只支援 JPG 或 JPEG 格式的圖片');
     }
     
@@ -208,12 +209,15 @@ async function submitForm() {
                 throw Error(result.message)
             }
             alert('表單更新成功！');
+            window.location.href = "/member";
         }else{
             const result = await submitFormUnified(formId, postId, questionIds);
             if(!result.ok){
                 throw Error(result.message)
             }
-            alert('表單提交成功！');
+            alert('表單提交成功！');    
+            window.location.href = "/member";
+            
         }
 
     } catch (error) {

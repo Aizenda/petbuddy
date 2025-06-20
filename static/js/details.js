@@ -114,7 +114,6 @@ const detailsControl = {
 		const postUserId = data.user_id;
 		const userId = req.user_id;
 		const postId = data.id;
-		console.log(postId)
 		detailsView.cheackUSer(userId , postUserId);
 		detailsView.render(data);
 		detailsView.renderImg(imgArray);
@@ -125,7 +124,6 @@ const detailsControl = {
 			this.cheackToken();
 			
 			const WantToAdoptData = await detailsMode.WantToAdopt(postId);
-			console.log(WantToAdoptData)
 			if(!WantToAdoptData.ok){
 				alert(WantToAdoptData.message);
 				return;
