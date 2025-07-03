@@ -100,8 +100,9 @@ const memberModel = {
 	async cancel(data){
 		const token = localStorage.getItem("token")
 		const cancelData = data
+		
 		try{
-			const req = await fetch(`/api/cancel_adoption?post_id=${cancelData.id}&adopter_id=${cancelData.adopter_id}`,{
+			const req = await fetch(`/api/cancel_adoption?post_id=${cancelData.send_id}&adopter_id=${cancelData.adopter_id}`,{
 				method:"DELETE",
 				headers:{
 					"Authorization": `Bearer ${token}`,

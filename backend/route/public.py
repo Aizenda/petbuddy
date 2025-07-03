@@ -26,7 +26,7 @@ async def get_public(request: PublicRequest = Depends()):
 	lock_key = cache_key + ":lock"
 
 	try:
-		# 查快取
+		# # 查快取
 		cached = r.get(cache_key)
 		if cached:
 			return {"ok": True, **json.loads(cached)}
@@ -64,6 +64,7 @@ async def get_public(request: PublicRequest = Depends()):
 			offset = page * 12
 			query = base_query + where_clause + " LIMIT %s OFFSET %s"
 			data_values = where_values + [12, offset]
+
 			cursor.execute(query, data_values)
 			result = cursor.fetchall()
 
