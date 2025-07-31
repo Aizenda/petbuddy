@@ -1,6 +1,6 @@
 const loginModel = {
   async send_code(phoneNumber) {
-      const res =await  fetch('/otp', {
+      const res =await  fetch('/api/auth/otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone_number: phoneNumber }),
@@ -17,7 +17,7 @@ const loginModel = {
   },
 
   async signup(userData) {
-      const res = await fetch('/signup', {
+      const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData),
@@ -34,7 +34,7 @@ const loginModel = {
 
   async login(credentials) {
     try {
-      const response = await fetch('/login', {
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials),

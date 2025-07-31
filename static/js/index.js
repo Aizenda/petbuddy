@@ -1,7 +1,7 @@
 const indexModel = {
 	async getCount(){
 		try{
-			const req = await fetch("/api/count",{
+			const req = await fetch("/api/statistics/animal-count",{
 				method: 'GET'
 			});
 			const data = await req.json();

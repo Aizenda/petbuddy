@@ -1,0 +1,82 @@
+name: CI/CD Pipeline  # ✅ 工作流程名稱：CI + CD 自動化流程
+
+on:
+  push:
+    branches: [main]  # ✅ 只有當 push 到 main 分支時才會觸發
+
+jobs:
+  test-jwt:  # ✅ Job 1：執行 JWT 單元測試
+    runs-on: ubuntu-latest  # ✅ 在 GitHub 提供的 Ubuntu 虛擬機上執行
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        # ✅ 把 GitHub 上的程式碼下載到虛擬機
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+        # ✅ 安裝 Python 3.10
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest python-dotenv
+        # ✅ 安裝專案依賴與測試工具（pytest + dotenv）
+
+      - name: Set environment variables
+        run: echo "JWT_KEY=secret_for_test" >> .env
+        # ✅ 設定 JWT 測試時需要的環境變數（模擬 .env）
+
+      - name: Run JWT unit tests
+        run: pytest test/test_jwt.py
+        # ✅ 執行測試：JWT 功能的單元測試腳本
+
+  deploy:
+    needs: test-jwt  # ✅ 僅當 test-jwt 成功才會觸發部署
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        # ✅ 再次抓取原始碼（這是另一個 Job）
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+        # ✅ 設定 Docker Buildx，用來建置 multi-platform image
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+        # ✅ 登入 Docker Hub，憑證從 GitHub Secrets 取得
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            aizeda/petbuddy:latest
+            aizeda/petbuddy:${{ github.sha }}
+        # ✅ 建置 Docker 映像檔並推送到 Docker Hub（latest + commit SHA 兩個 tag）
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker pull aizeda/petbuddy:latest
+            docker stop petbuddy-app || true
+            docker rm petbuddy-app || true
+            docker run -d --name petbuddy-app -p 80:8000 aizeda/petbuddy:latest
+        # ✅ 登入 EC2：
+        # - 拉取最新的映像檔
+        # - 停掉原本的容器（若存在）
+        # - 啟動新的容器，並開啟對外 port 80，對內使用 port 8000

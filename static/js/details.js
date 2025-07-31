@@ -3,7 +3,7 @@ const detailsMode = {
 		const id = location.pathname.split("/").pop();
 		const token = localStorage.getItem("token");
 		try{
-			const req = await fetch(`/api/details/${id}`,{
+			const req = await fetch(`/api/adoptions/${id}`,{
 			method:"GET",
 			headers: {
 				"Authorization": `Bearer ${token}`,
@@ -24,7 +24,7 @@ const detailsMode = {
 	async WantToAdopt(postId){
 		const token = localStorage.getItem("token");
 		try{
-		const req = await fetch("/api/want_to_adopt", {
+		const req = await fetch(`/api/adoptions/${postId}/likes`, {
 			method:"POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -114,6 +114,7 @@ const detailsControl = {
 		const postUserId = data.user_id;
 		const userId = req.user_id;
 		const postId = data.id;
+		console.log(data)
 		detailsView.cheackUSer(userId , postUserId);
 		detailsView.render(data);
 		detailsView.renderImg(imgArray);

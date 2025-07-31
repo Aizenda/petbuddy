@@ -30,7 +30,7 @@ const publicModel = {
     }
     params.append("page", this.page);
 
-    const response = await fetch(`/api/public?${params.toString()}`);
+    const response = await fetch(`/api/adoptions/public?${params.toString()}`);
     if (!response.ok) throw new Error("查詢失敗");
 
     const result = await response.json();

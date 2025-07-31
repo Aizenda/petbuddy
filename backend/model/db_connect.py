@@ -22,6 +22,7 @@ class MySQLPool:
                 port=int(os.getenv("DB_PORT", 3306)),
                 database=os.getenv("DB_NAME")
             )
+            
         except Error as err:
             print(f"資料庫連線池初始化失敗: {err}")
             self.pool = None
@@ -36,6 +37,7 @@ class MySQLPool:
             if not conn.is_connected():
                 raise DatabaseConnectionError("資料庫連線失敗")
             return conn
+        
         except Error as err:
             raise DatabaseConnectionError(f"資料庫連線錯誤: {err}")
 

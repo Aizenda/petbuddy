@@ -26,7 +26,7 @@ const memberModel = {
 	async advertise_for_adoption(){
 		const token = localStorage.getItem("token");
 		try{
-			const req = await fetch("/api/advertise_for_adoption",{
+			const req = await fetch("/api/member/adoptions/published",{
 				method:"GET",
 				headers:{
 					"Authorization": `Bearer ${token}`,
@@ -50,7 +50,7 @@ const memberModel = {
 	async want_to_adopt(){
 		const token = localStorage.getItem("token");
 		try{
-			const req = await fetch("/api/want_to_adopt",{
+			const req = await fetch("/api/member/adoptions/favorites",{
 				method:"GET",
 				headers:{
 					"Authorization": `Bearer ${token}`,
@@ -74,7 +74,7 @@ const memberModel = {
 	async read_form(userData){
 		const token = localStorage.getItem("token");
 		try{
-			const req = await fetch("/api/check/form",{
+			const req = await fetch("/api/forms/check",{
 				method:"POST",
 				headers:{
 					"Authorization": `Bearer ${token}`,
@@ -126,7 +126,7 @@ const memberModel = {
 	async getAllData(){
 		const token = localStorage.getItem("token")
 		try{
-			const req = await fetch("/api/get_all_data",{
+			const req = await fetch("/api/member/adoptions/all",{
 				method:"GET",
 				headers:{
 					"Authorization": `Bearer ${token}`,
@@ -149,7 +149,7 @@ const memberModel = {
 		const token = localStorage.getItem("token")
 		const postData = data
 		try{
-			const req = await fetch(`/api/complete-adoption/${postData.send_id}`,{
+			const req = await fetch(`/api/posts/${postData.send_id}/complete`,{
 				method:"POST",
 				headers:{
 					"Authorization": `Bearer ${token}`,
@@ -173,7 +173,7 @@ const memberModel = {
 		const token = localStorage.getItem("token")
 		const postData = data
 		try{
-			const req = await fetch(`/api/cancel-adoption/${postData.send_id}`,{
+			const req = await fetch(`/api/posts/${postData.send_id}`,{
 				method:"DELETE",
 				headers:{
 					"Authorization": `Bearer ${token}`,
@@ -196,7 +196,7 @@ const memberModel = {
 	async getHistor(){
 		const token = localStorage.getItem("token")
 		try{
-			const req = await fetch("/api/get_histor",{
+			const req = await fetch("/api/member/adoptions/history",{
 				method:"GET",
 				headers:{
 					"Authorization": `Bearer ${token}`,

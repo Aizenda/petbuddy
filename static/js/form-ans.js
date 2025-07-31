@@ -300,7 +300,6 @@ function checkIfAnswered(answer, questionType) {
 
 const postId = localStorage.getItem("postId");
 const userId = localStorage.getItem("userId");
-console.log(userId)
 async function answersData(postId,userId){
 
     const token = localStorage.getItem("token");
@@ -309,7 +308,7 @@ async function answersData(postId,userId){
     };
     
     try{
-        const req = await fetch(`/api/ans?post_id=${postId}&user_id=${userId}`,{
+        const req = await fetch(`/api/posts/${postId}/forms/submissions/${userId}`,{
             method:"GET",
             headers: {
             Authorization: `Bearer ${token}`,

@@ -283,7 +283,8 @@ async function submitFormUnified(formId, postId, questionIds) {
     
     const path = window.location.pathname;
     if(path === "/revise"){
-        const response = await fetch('/api/revise-form', {
+        const postId = localStorage.getItem("postId");
+        const response = await fetch(`/api/posts/${postId}/forms/submissions`, {
             method: 'PUT',
             body: formData,
             headers: {
@@ -297,8 +298,9 @@ async function submitFormUnified(formId, postId, questionIds) {
         return data
 
     }else{
-
-        const response = await fetch('/api/submit-form', {
+        const currentUrl = window.location.href;
+        const postId = currentUrl.split("/").pop();
+        const response = await fetch(`/api/posts/${postId}/forms/submissions`, {
             method: 'POST',
             body: formData,
             headers: {

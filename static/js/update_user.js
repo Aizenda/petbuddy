@@ -4,7 +4,7 @@ const userModel = {
 		try{
 			const formData = new FormData();
 			formData.append("file", avatarData); 
-			const req = await fetch("/api/member/updata_avatar",{
+			const req = await fetch("/api/member/avatar",{
 				method:"PUT",
 				headers:{
 					"Authorization": `Bearer ${this.token}`,
@@ -25,7 +25,7 @@ const userModel = {
 	},
 	async updateuserData(userData){
 		try{
-			const req = await fetch("/api/member/update_user",{
+			const req = await fetch("/api/member/profile",{
 				method:"PUT",
 				headers: {
 					"Authorization": `Bearer ${this.token}`,
@@ -47,7 +47,7 @@ const userModel = {
 	},
 	async updatePassword(password){
 		try{
-			const req = await fetch("/api/member/update_password",{
+			const req = await fetch("/api/member/password",{
 				method:"PUT",
 				headers: {
 					"Authorization": `Bearer ${this.token}`,
@@ -69,7 +69,7 @@ const userModel = {
 	},
 	async getUserDate(){
 		try{
-			const req = await fetch("/api/member/get_user_date",{
+			const req = await fetch("/api/member/profile",{
 				method:"GET",
 				headers: {
 					"Authorization": `Bearer ${this.token}`,

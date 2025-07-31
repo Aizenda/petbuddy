@@ -4,6 +4,8 @@ from pydantic import BaseModel
 from typing import Optional
 import math
 from ..model.db_connect import mysql_pool
+from ..model.redis_sever import redis_cache  # 使用統一實例
+import json
 
 router = APIRouter()
 
@@ -14,10 +16,51 @@ class PrivateRequest(BaseModel):
     color: Optional[str] = None
     page: int = 0
 
-@router.get("/api/private")
-async def private_data(request: PrivateRequest = Depends()):
+@router.get(
+    "/api/member/adoptions/private",
+    tags=["Adoption"],
+    summary="取得私人送養資料",
+    description="根據條件查詢私人送養資料，支援地點、種類、性別、顏色與分頁，結果會快取 5 分鐘",
+    response_description="成功查詢",
+    responses={
+        200: {
+            "description": "成功",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "ok": True,
+                        "data": [
+                            {
+                                "id": 1,
+                                "user_id": 12,
+                                "pet_name": "小花",
+                                "pet_kind": "狗",
+                                "pet_colour": "白",
+                                "images": ["https://your-s3/img1.jpg"]
+                            }
+                        ],
+                        "current_page": 0,
+                        "total_pages": 3,
+                        "total_count": 28
+                    }
+                }
+            }
+        },
+        500: {"description": "伺服器錯誤"}
+    }
+)
+async def get_private_adoptions(request: PrivateRequest = Depends()):
     conn = None
     cursor = None
+
+    # ✅ 使用統一的快取鍵生成方法
+    filters = request.model_dump(exclude_none=True)
+    cache_key = redis_cache.get_cache_hash_key("private_adoptions", filters)
+    
+    cached = redis_cache.get_cache(cache_key)
+    if cached:
+        return JSONResponse({"ok": True, **cached}, status_code=200)
+
     try:
         conn = mysql_pool.get_connection()
         cursor = conn.cursor(dictionary=True)
@@ -85,15 +128,21 @@ async def private_data(request: PrivateRequest = Depends()):
         cursor.execute(select_sql, params_for_data)
         data = cursor.fetchall()
 
-        return JSONResponse({
+        result = {
             "data": data,
             "current_page": request.page,
             "total_pages": total_pages,
             "total_count": total_count
-        },status_code=200)
+        }
+
+        # ✅ 設定快取 5 分鐘
+        redis_cache.set_cache(cache_key, result, 300)
+
+        return JSONResponse({"ok": True, **result}, status_code=200)
+        
     except Exception as e:
         print(e)
-        return JSONResponse({"error": str(e)}, status_code=500)
+        return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
     finally:
         if cursor:
             cursor.close()

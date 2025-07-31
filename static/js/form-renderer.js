@@ -708,7 +708,7 @@ async function getData() {
 	if(path === "/read" || path === "/revise"){
 		try{
 			const postId =localStorage.getItem("postId") ;
-			const req = await fetch(`/api/form/${postId}`, {
+			const req = await fetch(`/api/posts/${postId}/forms`, {
 					method: "GET",
 					headers: {
 					Authorization: `Bearer ${token}`,
@@ -729,7 +729,7 @@ async function getData() {
 	};
 	try{
 			const postId =path.split("/").pop();
-			const req = await fetch(`/api/form/${postId}`, {
+			const req = await fetch(`/api/posts/${postId}/forms`, {
 					method: "GET",
 					headers: {
 					Authorization: `Bearer ${token}`,

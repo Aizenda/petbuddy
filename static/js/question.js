@@ -3,7 +3,10 @@ const questionModel = {
 		const token = localStorage.getItem("token");
 
 		try{
-			const req = await fetch("/api/form", {
+			const currentUrl = window.location.href;
+			const postId = currentUrl.split("/").pop();
+			console.log(postId)
+			const req = await fetch(`/api/posts/${postId}/forms`, {
 				method:"POST",
 				headers:{
 					"Authorization": `Bearer ${token}`,

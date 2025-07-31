@@ -8,7 +8,7 @@ const privateModel = {
         params.append(key, value);
       }
     }
-    const res = await fetch(`/api/private?${params.toString()}`, {
+    const res = await fetch(`/api/member/adoptions/private?${params.toString()}`, {
       method: "GET"
     });
     const json = await res.json();
