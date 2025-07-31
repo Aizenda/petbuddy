@@ -35,7 +35,7 @@ jobs:
         # ✅ 設定 JWT 測試時需要的環境變數（模擬 .env）
 
       - name: Run JWT unit tests
-        run: pytest test/test_jwt.py
+        run: PYTHONPATH=. pytest test/test_jwt.py
         # ✅ 執行測試：JWT 功能的單元測試腳本
 
   deploy:
