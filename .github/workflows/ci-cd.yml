@@ -26,15 +26,12 @@ jobs:
           pip install pytest python-dotenv
         # ✅ 安裝專案依賴與測試工具（pytest + dotenv）
 
-      - name: Set environment variables
-        run: |
-          echo "JWT_KEY=secret_for_test" >> .env
-          echo "REDIS_HOST=localhost" >> .env
-          echo "REDIS_PORT=6379" >> .env
-          echo "REDIS_DB=0" >> .env
-        # ✅ 設定 JWT 測試時需要的環境變數（模擬 .env）
-
       - name: Run JWT unit tests
+        env:
+          JWT_KEY: secret_for_test
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          REDIS_DB: 0
         run: PYTHONPATH=. pytest test/test_jwt.py
         # ✅ 執行測試：JWT 功能的單元測試腳本
 
