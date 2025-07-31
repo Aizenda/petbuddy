@@ -76,7 +76,7 @@ jobs:
             docker pull aizeda/petbuddy:latest
             docker stop petbuddy-app || true
             docker rm petbuddy-app || true
-            docker run -d --name petbuddy-app -p 80:8000 aizeda/petbuddy:latest
+            docker run -d --name petbuddy-app -p 8002:8000 aizeda/petbuddy:latest
         # ✅ 登入 EC2：
         # - 拉取最新的映像檔
         # - 停掉原本的容器（若存在）
