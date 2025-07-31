@@ -79,7 +79,7 @@ jobs:
             docker run -d \
             --name petbuddy-app \
             --env-file /home/ubuntu/.env \
-            -p 8002:8000 \
+            -p 8000:8000 \
             aizeda/petbuddy:latest
         # ✅ 登入 EC2：
         # - 拉取最新的映像檔
