@@ -17,7 +17,7 @@ class JWT:
 		payload = {
 			"userid": userid,
 			"username": username,
-			"exp":datetime.now() + timedelta(minutes=EXPIRE_MINUTES)
+			"exp": datetime.now() + timedelta(minutes=expire_minutes)
 		}
 
 		token = jwt.encode(payload, key, ALGORITHM)
